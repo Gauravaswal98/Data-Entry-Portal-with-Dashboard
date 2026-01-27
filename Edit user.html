@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Edit User</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+	<meta content="Coderthemes" name="author" />
+	<!-- App favicon -->
+	<link rel="shortcut icon" href="assets/images/tablogo.png">
+	<!-- App css -->
+	<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+	<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style" />
+	<link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style" />
+	<style>
+		/* Page loader style */
+		.loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 0;
+			/* Start with 0 width */
+			height: 4px;
+			background-color: #ce5a2c;
+			/* Initial color */
+			z-index: 9999;
+			transition: width 0.1s linear;
+			/* Smooth transition */
+		}
+
+		.logo-lg video {
+			object-fit: cover;
+			width: 100%;
+			border-radius: 10px;
+			/* Make the video fill the span horizontally */
+		}
+	</style>
+</head>
+
+<body style="background: #5634a1;
+          background: linear-gradient(122deg, #5634a1 0%, #c573da 100%);" class="loading authentication-bg"
+	data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+	<div class="loader"></div>
+	<div class="container"
+		style="background-color:none; margin-top:35px; max-height:600px; height: fit-content; overflow: auto; display: flex; justify-content: space-between;">
+		<div class="bg" style="background-color: none; width:100%; height: 100%;">
+			<img src="assets/images/edituser.gif" style="max-height: 500px; height: fit-content;">
+		</div>
+		<div class="card"
+			style="background-color:none; max-height: 500px; height: fit-content; width:100%; border-left: 1px solid #e0e0e0; box-shadow: 10px 10px 5px#e6ecee">
+			<!-- Logo-->
+			<div class="card-header bg-warning" style="height:75px;">
+				<span class="logo-lg">
+					<video class="video-bg" autoplay loop muted style="height:50px;">
+						<source src="assets/video/sidenav1.mp4" type="video/mp4">
+					</video>
+				</span>
+			</div>
+			<div class="card-body" style="background-color: none;">
+				<div class="text-center w-75 m-auto" style="background-color: none;">
+					<h4 class="text-dark-50 text-center mt-0 fw-bold">
+						<i class="mdi mdi-account-edit"></i> Edit User Details Here
+					</h4>
+				</div>
+				<form action="Users.html" class="form"
+					style="background-color: none; min-height:250px; height: fit-content; overflow: auto;">
+					<div class="mb-3" style="background-color: none;">
+						<label for="lob" class="form-label">User Type</label>
+						<select class="form-control" name='user' id="user">
+							<option>Select User Type</option>
+							<option value='Admin'>Admin</option>
+							<option value='Advisor'>Advisor</option>
+							<option value='Others'>Others</option>
+						</select>
+					</div>
+					<div class="mb-3" style="background-color: none;">
+						<label for="fullname" class="form-label">User Name</label>
+						<input class="form-control" type="text" id="fullname" name='fullname'
+							placeholder="Enter User Name">
+					</div>
+
+					<div class="mb-3" style="background-color: none;">
+						<label for="fullname" class="form-label">Employee Code</label>
+						<input class="form-control" type="text" id="employeeCode" name='employeeCode'
+							placeholder="Enter Employee Code">
+					</div>
+					<div style="background-color: none; justify-items: center; width: 100%;">
+						<button class="btn btn-primary" type="submit"><i class="mdi mdi-content-save-all"></i>
+							Save User Details</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="assets/js/vendor.min.js"></script>
+	<script src="assets/js/app.min.js"></script>
+	<script>
+		window.addEventListener('load', function () {
+			const loader = document.querySelector('.loader');
+
+			// Measure the page load time
+			const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+
+			// Calculate progress speed based on load time (larger load time, slower loader speed)
+			let duration = Math.max(1000, loadTime);  // Ensure the duration is at least 1 second
+
+			// Set loader progress (dynamically change width based on load time)
+			loader.style.transitionDuration = `${duration}ms`;  // Set the transition time dynamically
+			loader.style.width = '100%';  // Start the loader animation
+
+			// Hide the loader after it reaches 100% width
+			setTimeout(function () {
+				loader.style.display = 'none';
+			}, duration);  // Hide loader after the animation completes
+		});
+	</script>
+</body>
+
+</html>

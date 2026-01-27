@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Upload Files</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Coderthemes" name="author">
+        <link rel="icon" href="assets/images/tablogo.png" type="image/png">
+        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+        <link href="assets/css/app.min.css" rel="stylesheet" type="text/css"
+            id="light-style">
+        <link href="assets/css/app-dark.min.css" rel="stylesheet"
+            type="text/css" id="dark-style">
+        <style>
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: center;
+        }
+
+        .table {
+            width: 100%;
+        }
+
+        .appointment-table {
+            max-height: 180px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        .h-100 {
+            background-image: url('assets/images/sidewali1.jpg');
+            /* Replace with your image path */
+            background-size: cover;
+            /* Ensure the background covers the entire div */
+            background-position: center;
+            /* Center the image */
+            background-repeat: no-repeat;
+            /* Prevent repetition */
+            overflow: hidden;
+            /* Ensures no content spills out */
+            border-radius: 10px;
+            /* Optional: Adds rounded corners */
+        }
+
+        .glass-effect {
+            background-color: rgba(0, 0, 0, 0.1);
+            /* Semi-transparent dark background */
+            backdrop-filter: blur(4px);
+            /* Glass blur effect */
+            -webkit-backdrop-filter: blur(4px);
+            /* Safari support */
+            border-radius: 10px;
+            /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+            /* Depth */
+            /* Prevent content spill */
+            margin: 10px;
+            /* Adds spacing around the list */
+            margin-top: 20px;
+        }
+
+        .side-nav-item {
+            width: 100%;
+            /* Full width */
+        }
+
+        .side-nav-link {
+            display: flex;
+            /* Horizontal alignment for icon and text */
+            align-items: center;
+            /* Vertical centering */
+            justify-content: flex-start;
+            /* Align text and icon to the left */
+            white-space: nowrap;
+            /* Prevent text wrapping */
+            overflow: hidden;
+            /* Hide overflowing text */
+            text-overflow: ellipsis;
+            /* Add ellipsis for truncated text */
+            width: 100%;
+            /* Full width for links */
+            padding: 10px 15px;
+            /* Inner spacing */
+            border-radius: 5px;
+            /* Rounded corners for links */
+            text-decoration: none;
+            /* Remove underline */
+            color: white;
+            /* White text color */
+            font-weight: 500;
+            /* Slightly bold */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Smooth hover effect */
+        }
+
+        .side-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            /* Light background on hover */
+            color: #fff;
+            /* Change text color on hover */
+        }
+
+        /* Highlight the active sidebar link */
+        .side-nav-link.active {
+            background-color: #e2bcee46;
+            /* Dark background for active link */
+            color: #ffffff;
+            /* White text color for active link */
+            font-weight: bold;
+            /* Optional: Make the active link bold */
+        }
+
+        .side-nav-link i {
+            margin-right: 10px;
+            /* Space between icon and text */
+            flex-shrink: 0;
+            /* Prevent icon from resizing */
+            color: white;
+        }
+
+        .side-nav-link span {
+            margin-right: 10px;
+            /* Space between icon and text */
+            flex-shrink: 0;
+            /* Prevent icon from resizing */
+            color: white;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .logo-lg video {
+            object-fit: cover;
+            width: 100%;
+            /* Make the video fill the span horizontally */
+        }
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+
+        .side-nav-link .title {
+            position: relative;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size:18px;
+            font-weight: 700;
+            text-decoration: none;
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+            /* Use Poppins as the primary font, fallback to Lato */
+            background: linear-gradient(90deg, #ff02f2, #b3ff6d, #76ffff, #ffce2b, #fd9d3d, #ff0080);
+            background-clip: text;
+            background-size: 300%;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: gradient-loop 4s linear infinite;
+        }
+
+        @keyframes gradient-loop {
+            0% {
+                background-position: 0%;
+            }
+
+            100% {
+                background-position: 100%;
+            }
+        }
+        .side-nav-link .subtitle {
+            position: relative;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            font-style: normal;
+            font-variant: normal;
+            text-transform: none;
+            /* Use Poppins as the primary font, fallback to Lato */
+            background: linear-gradient(90deg, #ff02f2, #b3ff6d, #76ffff, #ffce2b, #fd9d3d, #ff0080);
+            background-clip: text;
+            background-size: 300%;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: gradient-loop 4s linear infinite;
+        }
+
+        @keyframes gradient-loop {
+            0% {
+                background-position: 0%;
+            }
+
+            100% {
+                background-position: 100%;
+            }
+        }
+li.brand-heading {
+        padding: 5px 10px;  /* Less space around */
+        line-height: 1.2;
+    }
+    /* Remove hover effect just for this li */
+    .brand-heading a.side-nav-link:hover,
+    .brand-heading a.side-nav-link:focus,
+    .brand-heading a.side-nav-link:active {
+        background: none !important;
+        box-shadow: none !important;
+        color: inherit;
+    }
+
+    .brand-heading .side-nav-link {
+        display: block;
+        text-decoration: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Master + Stroke */
+    .brand-heading .title {
+        padding-left:10px;
+        line-height: 1.1;
+    }
+
+    /* Life Insurance under "Stroke" */
+    .brand-heading .subtitle {
+        display: block;
+        padding-left: 100px; /* visually align under "Stroke" */
+        margin-top:1px;
+        line-height: 1;
+    }
+    </style>
+    </head>
+
+    <body class="loading"
+        data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+        <div class="loader"></div>
+        <div class="wrapper">
+
+            <div id="sidebar-container"></div>
+
+            <!-- JavaScript to load sidebar.html and set active class -->
+            <script>
+  fetch('sidemenu.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('sidebar-container').innerHTML = data;
+
+      const currentPage = window.location.pathname.split('/').pop();
+      const navLinks = document.querySelectorAll('.side-nav-link');
+
+      navLinks.forEach(link => {
+        const linkPage = link.getAttribute('href');
+
+        // Mapping sub-pages to main links
+        const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(currentPage) && linkPage === 'disposition-data.html';
+        const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(currentPage) && linkPage === 'helpline-aod.html';
+        const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) && linkPage === 'webchat-aod.html';
+
+        // Final condition to set active class
+        if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+          link.classList.add('active');
+        }
+      });
+    });
+</script>
+
+            <div class="content-page" style="background-color: #e7e5e5;">
+                <div class="content"
+                    style="background-color:none; margin-bottom: -24px;">
+
+                    <div class="navbar-custom"
+                        style="box-shadow: 0 5px 10px #64c6ff2f;">
+                        <ul class="list-unstyled topbar-menu float-end mb-0">
+                            <li class="dropdown notification-list d-lg-none">
+                                <a class="nav-link dropdown-toggle arrow-none"
+                                    data-bs-toggle="dropdown"
+                                    href="#"
+                                    role="button" aria-haspopup="false"
+                                    aria-expanded="false">
+                                    <i class="dripicons-search noti-icon"></i>
+                                </a>
+                                <div
+                                    class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                    <form class="p-3">
+                                        <input type="text" class="form-control"
+                                            placeholder="Search ..."
+                                            aria-label="Recipient's username">
+                                    </form>
+                                </div>
+                            </li>
+                            <li class="notification-list"
+                                style="margin-top: 15px;">
+                                <a class="nav-link end-bar-toggle"
+                                    href="notepad.html">
+                                    <img src="assets/images/journal.gif"
+                                        alt="img"
+                                        class="dripicons-clipboard noti-icon"
+                                        style=" border-radius:5px; height: 40px;">
+                                    Add Notes
+                                </a>
+                            </li>
+
+                            <li class="dropdown notification-list">
+                                <a
+                                    class="nav-link dropdown-toggle nav-user arrow-none me-0"
+                                    data-bs-toggle="dropdown"
+                                    href="#" role="button" aria-haspopup="false"
+                                    aria-expanded="false"
+                                    style="height:1px">
+                                    <span class="account-user-avatar">
+                                        <img src="assets/images/userlogo.gif"
+                                            alt="user-image"
+                                            class="rounded-circle">
+                                    </span>
+                                    <span>
+                                        <span>
+                                            <span
+                                                class="account-user-name">Gaurav</span>
+                                            <span
+                                                class="account-position">Admin</span>
+                                        </span>
+                                    </a>
+                                    <div
+                                        class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+
+                                        <a href="ChangePassword.html"
+                                            class="dropdown-item notify-item">
+                                            <img
+                                                src="assets/images/password.gif"
+                                                alt="img"
+                                                style="border-radius:5px; height: 30px;">
+                                            <span>Change Password</span>
+                                        </a>
+
+                                        <a href="Login page.html"
+                                            class="dropdown-item notify-item">
+                                            <img src="assets/images/log-out.gif"
+                                                alt="img"
+                                                style="border-radius:5px; height: 30px;">
+                                            <span>Logout</span>
+                                        </a>
+                                    </div>
+                                </li>
+
+                            </ul>
+                            <button class="button-menu-mobile open-left">
+                                <img src="assets/images/menu.gif" alt="img"
+                                    style="border-radius:5px; height:40px;">
+                            </button>
+                        </div>
+
+                        <div class="container-fluid"
+                            style="margin-top:20px; max-height: 100%; height: fit-content; background-color: none;">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                <div
+                                                    class="tab-pane show active"
+                                                    id="responsive-preview">
+                                                    <div
+                                                        style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                                        <img
+                                                            src="assets/images/upload-svgrepo-com.svg"
+                                                            alt="img"
+                                                            style="height: 40px; width: 40px;">
+                                                        <span
+                                                            style="font-weight:600; font-size: 18px; color: #254175;">Upload
+                                                            Files Here</span>
+                                                    </div>
+                                                    <hr>
+                                                    <!-- File upload section -->
+                                                    <div
+                                                        class="d-flex justify-content-between flex-wrap gap-1">
+                                                        <form
+                                                            class="w-full sm:w-1/3 md:w-1/4">
+                                                            <div
+                                                                class="col-md-10 mb-2">
+                                                                <label
+                                                                    style="color: #700606; font-size: 16px;">MIS
+                                                                    Data</label>
+                                                                <input
+                                                                    name="dispositionData"
+                                                                    type="file"
+                                                                    class="form-control"
+                                                                    placeholder="Enter File"
+                                                                    required />
+                                                            </div>
+                                                            <div
+                                                                style="background-color: none; max-width: fit-content;">
+                                                                <button
+                                                                    type="button"
+                                                                    class="int-productdata btn btn-primary mb-2"
+                                                                    title="Upload File"
+                                                                    style="margin-left: 100px;"><img
+                                                                        src="assets/images/upload.gif"
+                                                                        alt="img"
+                                                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                </button>
+                                                            </div>
+                                                        </form>
+
+                                                        <form
+                                                            class="w-full sm:w-1/3 md:w-1/4">
+                                                            <div
+                                                                class="col-md-10 mb-2">
+                                                                <label
+                                                                    style="color: #700606; font-size: 16px;">Aspect
+                                                                    Data</label>
+                                                                <input
+                                                                    name="aspectData"
+                                                                    type="file"
+                                                                    class="form-control"
+                                                                    placeholder="Enter File"
+                                                                    required
+                                                                    title="Choose file to upload" />
+                                                            </div>
+                                                            <div
+                                                                style="background-color: none; max-width: fit-content;">
+                                                                <button
+                                                                    type="button"
+                                                                    class="int-productdata btn btn-primary mb-2"
+                                                                    title="Upload File"
+                                                                    style="margin-left: 100px;"><img
+                                                                        src="assets/images/upload.gif"
+                                                                        alt="img"
+                                                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card" style="margin-top:-20px;">
+                                        <div class="card-body"
+                                            style="max-height:220px; height:fit-content;">
+                                            <div class="tab-content">
+                                                <div
+                                                    class="tab-pane show active"
+                                                    id="responsive-preview">
+                                                    <div
+                                                        style="overflow-x:auto; overflow-y:auto;"
+                                                        class="appointment-table">
+                                                        <table
+                                                            class="table table-bordered table-centered mb-0"
+                                                            id="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th
+                                                                        scope="col">Sr.
+                                                                        No.</th>
+                                                                    <th
+                                                                        scope="col">Uploaded
+                                                                        File
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col">Uploaded
+                                                                        By
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col">
+                                                                        Date
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col">
+                                                                        Delete</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="geeks">
+                                                                <tr>
+                                                                    <td>
+                                                                    </td>
+                                                                    <td>
+                                                                    </td>
+                                                                    <td>
+                                                                    </td>
+                                                                    <td>
+                                                                    </td>
+                                                                    <td
+                                                                        style="text-align: center;">
+                                                                        <form
+                                                                            action="deletes"
+                                                                            method="post"
+                                                                            class="d-flex justify-content-center">
+                                                                            <a
+                                                                                href="#">
+                                                                                <i
+                                                                                    class="mdi mdi-delete me-1"
+                                                                                    style="color: #e2612e;">
+                                                                                </i>
+                                                                            </a>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="footer" style="background-color:#fff;">
+
+                    </footer>
+
+                    <script src="assets/js/vendor.min.js"></script>
+                    <script src="assets/js/app.min.js"></script>
+                    <script src="assets/js/row bg.js"></script>
+
+                    <script
+                        src="assets/js/vendor/jquery.dataTables.min.js"></script>
+                    <script
+                        src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+                    <script
+                        src="assets/js/vendor/dataTables.responsive.min.js"></script>
+                    <script
+                        src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+                    <script
+                        src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+                    <script>
+                window.addEventListener('load', function () {
+                    const loader = document.querySelector('.loader');
+
+                    // Measure the page load time
+                    const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+
+                    // Calculate progress speed based on load time (larger load time, slower loader speed)
+                    let duration = Math.max(1000, loadTime);  // Ensure the duration is at least 1 second
+
+                    // Set loader progress (dynamically change width based on load time)
+                    loader.style.transitionDuration = `${duration}ms`;  // Set the transition time dynamically
+                    loader.style.width = '100%';  // Start the loader animation
+
+                    // Hide the loader after it reaches 100% width
+                    setTimeout(function () {
+                        loader.style.display = 'none';
+                    }, duration);  // Hide loader after the animation completes
+                });
+            </script>
+                </body>
+
+            </html>

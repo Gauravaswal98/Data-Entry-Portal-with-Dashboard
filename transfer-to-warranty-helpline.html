@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Transfer To Warranty Helpline</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <link rel="shortcut icon" href="assets/images/tablogo.png">
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <link href="assets/css/vendor/simplemde.min.css" rel="stylesheet" type="text/css">
+    <style>
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: left;
+        }
+
+        .appointment-table table td {
+            padding: 3px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 2px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        .page-up-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 0px;
+            display: none;
+            border: none;
+            cursor: pointer;
+            background-color: transparent;
+        }
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+
+
+
+        /* popup page shake */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-5px);
+            }
+
+            40% {
+                transform: translateX(5px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes zoomEffect {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .btn {
+            animation: zoomEffect 1s infinite ease-in-out;
+        }
+
+        #timer {
+            font-size: 1rem;
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            border: 5px solid #4CAF50;
+        }
+    </style>
+</head>
+
+<body class="loading"
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+    <div class="loader"></div>
+    <div class="wrapper">
+        <div id="sidebar-container"></div>
+
+        <!-- JavaScript to load sidebar.html and set active class -->
+        <script>
+            fetch('sidemenu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    const currentPage = window.location.pathname.split('/').pop();
+                    const navLinks = document.querySelectorAll('.side-nav-link');
+                    navLinks.forEach(link => {
+                        const linkPage = link.getAttribute('href');
+                    });
+                });
+        </script>
+
+        <div class="content-page" style="background-color: #e7e5e5;">
+            <div class="content" style="background-color:none; margin-bottom: -24px;">
+
+                <div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+                    <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="dropdown notification-list d-lg-none">
+                            <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="false" aria-expanded="false">
+                                <i class="dripicons-search noti-icon"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                <form class="p-3">
+                                    <input type="text" class="form-control" placeholder="Search ..."
+                                        aria-label="Recipient's username">
+                                </form>
+                            </div>
+                        </li>
+                        <li class="notification-list" style="margin-top: 15px;">
+                            <a class="nav-link end-bar-toggle" href="notepad.html">
+                                <img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+                                    style=" border-radius:5px; height: 40px;">
+                                Add Notes
+                            </a>
+                        </li>
+
+                        <li class="dropdown notification-list">
+                            <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+                                href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+                                <span class="account-user-avatar">
+                                    <img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+                                </span>
+                                <span>
+                                    <span>
+                                        <span class="account-user-name">Gaurav</span>
+                                        <span class="account-position">Admin</span>
+                                    </span>
+                            </a>
+                            <div
+                                class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+
+                                <a href="ChangePassword.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/password.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Change Password</span>
+                                </a>
+
+                                <a href="Login page.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/log-out.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <button class="button-menu-mobile open-left">
+                        <img src="assets/images/menu.gif" alt="img" style="border-radius:5px; height:40px;">
+                    </button>
+                </div>
+                <!-- end Topbar -->
+                <!-- container Start-->
+                <div class="container-fluid" style="background-color:none; margin-bottom:20px;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-flex justify-content-between">
+                                <h4 class="page-title"><img src="assets/images/helpdesk.gif" alt="img"
+                                        style="border-radius:5px; height: 40px;">
+                                    Source : Transfer To Warranty Helpline</h4>
+                                <div class="float-end d-flex gap-2" style="margin: 2% 0 0 0;">
+                                    <div>
+                                        <button type="button" class="btn btn-info btn-sm dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            style="animation: none;">Update another lead </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#">Lead ID : 121 <i
+                                                    class="uil-check float-end text-success"></i></a>
+                                            <a class="dropdown-item" href="#">Lead ID : 122 <i
+                                                    class="uil-times float-end text-danger"></i></a>
+                                            <a class="dropdown-item" href="#">Lead ID : 123 <i
+                                                    class="uil-check float-end text-success"></i></a>
+                                            <a class="dropdown-item" href="#">Lead ID : 124 <i
+                                                    class="uil-times float-end text-danger"></i></a>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            style="animation: none;">Update another source </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="transfer-to-smartcare.html">Transfer To
+                                                Smartcare <i class="uil-check float-end text-success"></i></a>
+                                            <a class="dropdown-item" href="transfer-to-helpline-aod.html">Transfer To
+                                                Helpline AOD <i class="uil-times float-end text-danger"></i></a>
+                                            <a class="dropdown-item" href="transfer-to-webchat-aod.html">Transfer To
+                                                Webchat
+                                                AOD <i class="uil-check float-end text-success"></i></a>
+                                            <a class="dropdown-item" href="transfer-to-helpline.html">Transfer To
+                                                Helpline <i class="uil-times float-end text-danger"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr style="margin-top: -5px;" />
+                    </div>
+                    <div class="row">
+                        <!-- site details -->
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="header-title mb-3"><img src="assets/images/search-engine.gif" alt="img"
+                                            style="border-radius:5px; height: 40px;">
+                                        Lead Details</h4>
+                                    <div class="appointment-table"
+                                        style="overflow-x:auto; overflow-y:auto; max-height:100px; height:fit-content;">
+                                        <table class="table table-bordered table-centered mb-0" id="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Mobile
+                                                        Number</th>
+                                                    <th scope="col">Customer
+                                                        Name</th>
+                                                    <th scope="col">Created
+                                                        Date</th>
+                                                    <th scope="col">Lead
+                                                        ID</th>
+                                                    <th scope="col">Last
+                                                        Modified</th>
+                                                    <th scope="col">Disposition</th>
+                                                    <th scope="col">Source</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="geeks">
+                                                <tr>
+                                                    <td>Data</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> <!-- end card-body -->
+                            </div> <!-- end card-->
+                        </div> <!-- end col -->
+
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div style="overflow-x:auto; overflow-y:auto; max-height:140px; height:fit-content;"
+                                        class="appointment-table">
+                                        <table class="table table-bordered table-centered mb-0" id="table">
+                                            <thead>
+                                                <tr>
+                                                    <th
+                                                        style="text-align-last: center; width:100px; background-color: #302b63;">
+                                                        Details
+                                                    </th>
+                                                    <th>Date</th>
+                                                    <th>Disposition
+                                                        Status</th>
+                                                    <th>Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="geeks">
+                                                <tr>
+                                                    <th>
+                                                        <div class="d-flex justify-content-around gap-1"
+                                                            style="background-color: none;">
+                                                            <div title="Edit Details">
+                                                                <a href="Edit Fresh.html"
+                                                                    style="color: #e7ff61; font-size: 16px;"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#compose-modal">
+                                                                    &nbsp;<i class="uil-edit"></i>
+                                                                </a>
+                                                            </div>
+                                                            <span>|</span>
+                                                            <form action="deletes" method="post" class="d-flex h-25"
+                                                                style="background-color: none;">
+                                                                <a href="#" style="color: #ffcae3; font-size: 17px;"
+                                                                    title="Delete">
+                                                                    <i class="uil-trash-alt"></i>
+                                                                </a>
+                                                            </form>
+                                                            <span>|</span>Attempt
+                                                            1&nbsp;
+                                                        </div>
+                                                    </th>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <div class="d-flex justify-content-around gap-1"
+                                                            style="background-color: none;">
+                                                            <div title="Edit Details">
+                                                                <a href="Edit Fresh.html"
+                                                                    style="color: #e7ff61; font-size: 16px;"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#compose-modal">
+                                                                    &nbsp;<i class="uil-edit"></i>
+                                                                </a>
+                                                            </div>
+                                                            <span>|</span>
+                                                            <form action="deletes" method="post" class="d-flex h-25"
+                                                                style="background-color: none;">
+                                                                <a href="#" style="color: #ffcae3; font-size: 17px;"
+                                                                    title="Delete">
+                                                                    <i class="uil-trash-alt"></i>
+                                                                </a>
+                                                            </form>
+                                                            <span>|</span>Attempt
+                                                            2&nbsp;
+                                                        </div>
+                                                    </th>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <div class="d-flex justify-content-around gap-1"
+                                                            style="background-color: none;">
+                                                            <div title="Edit Details">
+                                                                <a href="Edit Fresh.html"
+                                                                    style="color: #e7ff61; font-size: 16px;"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#compose-modal">
+                                                                    &nbsp;<i class="uil-edit"></i>
+                                                                </a>
+                                                            </div>
+                                                            <span>|</span>
+                                                            <form action="deletes" method="post" class="d-flex h-25"
+                                                                style="background-color: none;">
+                                                                <a href="#" style="color: #ffcae3; font-size: 17px;"
+                                                                    title="Delete">
+                                                                    <i class="uil-trash-alt"></i>
+                                                                </a>
+                                                            </form>
+                                                            <span>|</span>
+                                                            Attempt
+                                                            3&nbsp;
+                                                        </div>
+                                                    </th>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                    <td data-label></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div> <!-- end card-body -->
+                            </div> <!-- end card-->
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                    <div class="row"
+                        style="margin-top:0px; background-color: none;max-width: fit-content; width: 100%;">
+                        <div class="page-title-box">
+                            <h4 class="page-title"><img src="assets/images/to-do-list.gif" alt="img"
+                                    style="border-radius:5px; height: 40px;">
+                                Add Details Here</h4>
+                        </div>
+                    </div>
+
+                    <div class="container"
+                        style=" background-color: none;max-height: 100%; height: 100%; margin-top:0px;">
+                        <form action="Calling Data.html" style="min-height: fit-content; background-color:none;">
+                            <div class="fields"
+                                style="padding:10px; max-height:fit-content; height:100%; background-color: none; display: flex; flex-wrap: wrap; gap: 10px;">
+                                <div class="input-field">
+                                    <label for="date1">Attempt 1</label>
+                                    <input type="datetime-local" id="date1" name="date1" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition1">Disposition
+                                        Status 1</label>
+                                    <select name="disposition1" id="disposition1" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks1">Remarks
+                                        1</label>
+                                    <textarea id="remarks1" name="remarks1" placeholder="Enter Remarks..."></textarea>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="submitType1">Submit
+                                        Type</label>
+                                    <select name="submitType1" id="submitType1" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="date2">Attempt 2</label>
+                                    <input type="datetime-local" id="date2" name="date2" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition2">Disposition
+                                        Status 2</label>
+                                    <select name="disposition2" id="disposition2" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks2">Remarks
+                                        2</label>
+                                    <textarea id="remarks2" name="remarks2" placeholder="Enter Remarks..."></textarea>
+                                </div>
+                                <div class="input-field">
+                                    <label for="submitType2">Submit
+                                        Type</label>
+                                    <select name="submitType2" id="submitType2" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label for="date3">Attempt 3</label>
+                                    <input type="datetime-local" id="date3" name="date3" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition3">Disposition
+                                        Status 3</label>
+                                    <select name="disposition3" id="disposition3" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks3">Remarks
+                                        3</label>
+                                    <textarea id="remarks3" name="remarks3" placeholder="Enter Remarks..."></textarea>
+                                </div>
+                                <div class="input-field">
+                                    <label for="submitType3">Submit
+                                        Type</label>
+                                    <select name="submitType3" id="submitType3" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label for="advisorName">Advisor
+                                        Name</label>
+                                    <input type="text" id="advisorName" name="advisorName"
+                                        placeholder="Enter Advisor Name" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="employeeCode">Employee
+                                        Code</label>
+                                    <input type="text" id="employeeCode" name="employeeCode"
+                                        placeholder="Enter Employee Code" />
+                                </div>
+
+                            </div>
+                            <div
+                                style="background-color: none; display: flex; justify-content: space-between; width: 100%;">
+                                <div id="timer">00:00</div>
+                                <button id="stopWatch" type="submit" class="btn btn-primary w-100 float-center"
+                                    style="background-color: #9053df; margin-right:20px;"
+                                    title="Click to save your records"><img src="assets/images/shield.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">&nbsp;
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <button id="pageUpBtn" class="page-up-btn" title="Click to go top of the page">
+                        <img src="assets/images/up.gif" alt="img" style="border-radius:10px; height: 40px;">
+                    </button>
+                    <!-- container End -->
+                </div>
+            </div>
+            <!--container Fluid End -->
+        </div>
+        <!-- Edit attempts details -->
+        <div id="compose-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            role="dialog" aria-labelledby="compose-header-modalLabel" aria-hidden="true" style=" overflow: auto;
+            background: transparent;
+            backdrop-filter: blur(3px);  -webkit-backdrop-filter: blur(3px);">
+            <div class="modal-dialog modal-lg" style="width: 70%; max-width: 70%; height:70%;">
+                <div class="modal-content" style="height: 100%;">
+                    <div class="modal-header modal-colored-header bg-primary">
+                        <h4 class="modal-title" id="compose-header-modalLabel"><img src="assets/images/editdetails.gif"
+                                alt="img" style="border-radius:5px; height: 40px;">
+                            Edit Details</h4>
+                        <img src="assets/images/close.gif" alt="img"
+                            style="border-radius:5px; height: 40px; cursor: pointer;" title="Close"
+                            data-bs-dismiss="modal" aria-label="Close">
+                    </div>
+                    <div class="container"
+                        style="background-color:none;max-height:100%; height:fit-content; overflow: auto; width: 100%;">
+                        <form action="add-disposition-data.html" style="background-color:none; min-height: 300px;">
+                            <div class="fields"
+                                style="padding:10px; max-height:fit-content; height:100%; background-color: none; display: flex; flex-wrap: wrap; gap: 10px;">
+
+                                <div class="input-field">
+                                    <label for="date1">Attempt 1</label>
+                                    <input type="datetime-local" id="date1" name="date1" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition1">Disposition
+                                        Status 1</label>
+                                    <select name="disposition1" id="disposition1" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks1">Remarks
+                                        1</label>
+                                    <textarea id="remarks1" name="remarks1" placeholder="Enter Remarks..."></textarea>
+                                </div>
+                                <div class="input-field">
+                                    <label for="submitType1">Submit
+                                        Type</label>
+                                    <select name="submitType1" id="submitType1" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label for="date2">Attempt 2</label>
+                                    <input type="datetime-local" id="date2" name="date2" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition2">Disposition
+                                        Status 2</label>
+                                    <select name="disposition2" id="disposition2" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks2">Remarks
+                                        2</label>
+                                    <textarea id="remarks2" name="remarks2" placeholder="Enter Remarks..."></textarea>
+                                </div>
+                                <div class="input-field">
+                                    <label for="submitType2">Submit
+                                        Type</label>
+                                    <select name="submitType2" id="submitType2" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label for="date3">Attempt 3</label>
+                                    <input type="datetime-local" id="date3" name="date3" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="disposition3">Disposition
+                                        Status 3</label>
+                                    <select name="disposition3" id="disposition3" required>
+                                        <option disabled selected>Select
+                                            Here</option>
+                                        <option value="Transfer To Warranty Helpline">Transfer To Warranty Helpline
+                                        </option>
+                                        <option value="Transfer To Helpline AOD">Transfer To Helpline AOD</option>
+                                        <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                        <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                        <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                        <option value="Call Back">Call
+                                            Back</option>
+                                        <option value="Call Complete">Call
+                                            Complete</option>
+                                        <option value="Call disconnected by customer">Call
+                                            disconnected by
+                                            customer</option>
+                                        <option value="Complaint status">Complaint
+                                            status</option>
+                                        <option value="NCT">NCT</option>
+                                        <option value="Partial Success">Partial
+                                            Success</option>
+                                        <option value="Service Complaint Status">Service
+                                            Complaint Status</option>
+                                        <option value="Service Lead status">Service
+                                            Lead status</option>
+                                        <option value="Warranty related">Warranty
+                                            related</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="remarks3">Remarks
+                                        3</label>
+                                    <textarea id="remarks3" name="remarks3" placeholder="Enter Remarks..."></textarea>
+                                </div>
+                                <div class="input-field">
+                                    <label for="submitType3">Submit
+                                        Type</label>
+                                    <select name="submitType3" id="submitType3" required>
+                                        <option selected>Submit Only For
+                                            This
+                                            Source</option>
+                                        <option>Submit For All
+                                            Source</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <label for="advisorName">Advisor
+                                        Name</label>
+                                    <input type="text" id="advisorName" name="advisorName"
+                                        placeholder="Enter Advisor Name" />
+                                </div>
+
+                                <div class="input-field">
+                                    <label for="employeeCode">Employee
+                                        Code</label>
+                                    <input type="text" id="employeeCode" name="employeeCode"
+                                        placeholder="Enter Employee Code" />
+                                </div>
+                            </div>
+                            <div style="background-color: none; justify-items: center; width: 100%;">
+                                <button type="submit" class="btn btn-primary" style="background-color: #00bea5;"
+                                    title="Click to save your records"><img src="assets/images/shield.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">&nbsp;
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- End edit details -->
+        <!-- content -->
+        <!-- Footer Start -->
+        <footer class="footer" style="background-color:#fff"></footer>
+        <!-- end Footer -->
+    </div>
+    <!-- End Page Contant -->
+    </div>
+    <!-- END wrapper -->
+    <!-- bundle -->
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <!-- Typehead -->
+    <script src="assets/js/vendor/handlebars.min.js"></script>
+    <script src="assets/js/vendor/typeahead.bundle.min.js"></script>
+    <script src="assets/js/row bg.js"></script>
+    <!-- Demo -->
+    <script src="assets/js/pages/demo.typehead.js"></script>
+    <!-- Timepicker -->
+    <script src="assets/js/pages/demo.timepicker.js"></script>
+    <script src="assets/js/vendor/simplemde.min.js"></script>
+    <script>
+        // Get the button
+        const pageUpBtn = document.getElementById("pageUpBtn");
+        // Function to show the button when the user starts scrolling
+        window.onscroll = function () {
+            if (window.scrollY > 0) {
+                pageUpBtn.style.display = "block"; // Show button when scrolling
+            } else {
+                pageUpBtn.style.display = "none"; // Hide button when at the top
+            }
+        };
+        // Function to scroll to the top when the button is clicked
+        pageUpBtn.onclick = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+    </script>
+    <script>
+        window.addEventListener('load', function () {
+            const loader = document.querySelector('.loader');
+            // Measure the page load time
+            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+            // Calculate progress speed based on load time (larger load time, slower loader speed)
+            let duration = Math.max(1000, loadTime); // Ensure the duration is at least 1 second
+            // Set loader progress (dynamically change width based on load time)
+            loader.style.transitionDuration = `${duration}ms`; // Set the transition time dynamically
+            loader.style.width = '100%'; // Start the loader animation
+            // Hide the loader after it reaches 100% width
+            setTimeout(function () {
+                loader.style.display = 'none';
+            }, duration); // Hide loader after the animation completes
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let modal = document.getElementById("compose-modal");
+            let modalDialog = modal.querySelector(".modal-dialog");
+            modal.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    modalDialog.classList.add("shake");
+                    setTimeout(() => {
+                        modalDialog.classList.remove("shake");
+                    }, 400);
+                }
+            });
+        });
+    </script>
+    <script>
+        let timeElapsed = 0;
+        const timerElement = document.getElementById('timer');
+        const submitButton = document.getElementById('stopWatch');
+        let timer;
+
+        function updateTimer() {
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timeElapsed++;
+            timer = setTimeout(updateTimer, 1000);
+        }
+        updateTimer();
+        submitButton.addEventListener('click', function () {
+            clearTimeout(timer);
+        });
+    </script>
+</body>
+
+</html>

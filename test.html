@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="Coderthemes" name="author">
+	<link rel="shortcut icon" href="assets/images/tablogo.png" type="png">
+	<link href="assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+	<link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+	<style>
+		thead,
+		tbody {
+			text-align-last: center;
+			text-wrap: nowrap;
+		}
+
+		tbody tr {
+			text-align-last: left;
+		}
+
+		.appointment-table {
+			max-height: 300px;
+			height: fit-content;
+		}
+
+		.appointment-table table td {
+			padding: 5px;
+			font-size: 14px;
+		}
+
+		.appointment-table table th {
+			padding: 5px;
+			font-size: 14px;
+		}
+
+		.appointment-table table tbody tr {
+			margin-top: 50px;
+		}
+
+		#tailwind-table .sticky {
+			position: sticky;
+		}
+
+		#tailwind-table .left-0 {
+			left: 0;
+		}
+
+		#tailwind-table .right-0 {
+			right: 0;
+		}
+
+		#tailwind-table .top-0 {
+			top: 0;
+		}
+
+		#tailwind-table .z-10 {
+			z-index: 10;
+		}
+
+		#tailwind-table .z-20 {
+			z-index: 20;
+		}
+
+
+		/* Page loader style */
+		.loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 0;
+			/* Start with 0 width */
+			height: 4px;
+			background-color: #ce5a2c;
+			/* Initial color */
+			z-index: 9999;
+			transition: width 0.1s linear;
+			/* Smooth transition */
+		}
+
+
+		.employee-performance-wrapper {
+			max-height: 300px;
+			overflow-y: auto;
+			position: relative;
+		}
+
+		.employee-performance-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 14px;
+			border-spacing: 0;
+		}
+
+		.employee-performance-table th,
+		.employee-performance-table td {
+			padding: 8px 12px;
+			text-align: center;
+			white-space: nowrap;
+			vertical-align: middle;
+		}
+
+		.employee-performance-table thead th {
+			position: sticky;
+			top: 0;
+			background-color: #0b4d99;
+			z-index: 2;
+		}
+
+		.employee-performance-table tfoot td {
+			position: sticky;
+			bottom: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 1;
+			font-weight: bold;
+		}
+
+		.employee-performance-table .deficit-alert {
+			color: red;
+			font-weight: bold;
+		}
+
+		.advisor-table-container {
+			max-height: 300px;
+			overflow-y: auto;
+			display: block;
+		}
+
+		.advisor-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.advisor-table th,
+		.advisor-table td {
+			text-align: center;
+			vertical-align: middle;
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			padding: 8px;
+		}
+
+		.advisor-table thead th {
+			position: sticky;
+			top: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 2;
+		}
+
+		.advisor-table tfoot th {
+			position: sticky;
+			bottom: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 2;
+		}
+
+		.advisor-table th.sticky.left-0,
+		.advisor-table td.sticky.left-0 {
+			position: sticky;
+			left: 0;
+			background-color: #aa69df;
+			z-index: 3;
+		}
+
+		.advisor-table td.sticky.right-0,
+		.advisor-table th.sticky.right-0 {
+			position: sticky;
+			right: 0;
+			background-color: #9966FF;
+			color: white;
+			z-index: 3;
+		}
+
+		/* Chart height reduced */
+		#dispositionBarChart {
+			height: 350px !important;
+		}
+
+		#tatComplianceBarChart {
+			height: 350px !important;
+		}
+
+		#tatadataChartCanvas {
+			height: 350px !important;
+		}
+
+		#employeeTransferChart {
+			height: 350px !important;
+		}
+
+		/* summary css */
+		/* // Collapsible Closed */
+		details {
+			max-width: 1500px;
+			margin: 1rem auto;
+			padding: 1.5rem;
+			background-color: #fff;
+			border-radius: 1rem;
+			box-shadow: 0 .50rem 1rem rgba(0, 0, 0, 0.1);
+
+			summary {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 0;
+				transition: margin-bottom .4s;
+				position: relative;
+			}
+
+			/* // Disable browser default marker */
+			summary::-webkit-details-marker,
+			summary::marker {
+				content: "";
+				display: none;
+			}
+
+			/* // Custom marker */
+			summary::after {
+				content: "";
+				font-size: 1.5rem;
+				line-height: 1;
+				margin-right: 1rem;
+				cursor: pointer;
+				padding: .75rem;
+				display: grid;
+				place-content: center;
+				aspect-ratio: 1;
+				line-height: 0;
+				position: absolute;
+				top: -.5rem;
+				right: -1.5rem;
+				border-radius: 50%;
+			}
+
+			*:not(summary) {
+				animation-name: fade;
+				animation-duration: .4s;
+			}
+		}
+
+		/* // Collapsible OPEN */
+		details[open] {
+
+			/* // Custom marker */
+			summary {
+				margin-bottom: 1.5rem;
+
+				&::after {
+					content: "";
+				}
+			}
+		}
+	</style>
+</head>
+
+<body class="loading"
+	data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+	<div class="loader"></div>
+	<div class="wrapper">
+		<div id="sidebar-container"></div>
+		<!-- JavaScript to load sidebar.html and set active class -->
+		<script>
+			fetch('sidemenu.html')
+				.then(response => response.text())
+				.then(data => {
+					document.getElementById('sidebar-container').innerHTML = data;
+					const currentPage = window.location.pathname.split('/').pop();
+					const navLinks = document.querySelectorAll('.side-nav-link');
+					navLinks.forEach(link => {
+						const linkPage = link.getAttribute('href');
+						// Mapping sub-pages to main links
+						const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(
+							currentPage) && linkPage === 'disposition-data.html';
+						const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(
+							currentPage) && linkPage === 'helpline-aod.html';
+						const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) &&
+							linkPage === 'webchat-aod.html';
+						// Final condition to set active class
+						if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+							link.classList.add('active');
+						}
+					});
+				});
+		</script>
+		<div class="content-page" style="background-color: #e7e5e5;">
+			<div class="content" style="background-color:none; margin-bottom: -24px;">
+				<div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+					<ul class="list-unstyled topbar-menu float-end mb-0">
+						<li class="dropdown notification-list d-lg-none">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+								role="button" aria-haspopup="false" aria-expanded="false">
+								<i class="dripicons-search noti-icon"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+								<form class="p-3">
+									<input type="text" class="form-control" placeholder="Search ..."
+										aria-label="Recipient's username">
+								</form>
+							</div>
+						</li>
+						<li class="notification-list" style="margin-top:15px;">
+							<a class="nav-link end-bar-toggle" href="notepad.html">
+								<img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+									style=" border-radius:5px; height: 40px;">
+								Add Notes
+							</a>
+						</li>
+						<li class="dropdown notification-list" style="margin-top:20px;" title="Notifications">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown"
+								data-bs-auto-close="outside" href="#" role="button" aria-haspopup="false"
+								aria-expanded="false">
+								<img src="assets/images/notification.gif" alt="img"
+									style=" border-radius:5px; height: 30px;">
+							</a>
+							<div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg">
+								<!-- item-->
+								<div class="dropdown-item noti-title" style="margin-bottom: -15px;">
+									<h5 class="m-0">
+										<span class="float-end">
+											<img src="assets/images/callback-noti.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px; margin-top: -5px;">
+										</span>
+										Call Back Notifications
+									</h5>
+								</div>
+								<hr>
+								<div style="max-height: 230px;" data-simplebar>
+									<!-- item-->
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: rgb(238, 161, 17) !important;">
+												Almost
+												1
+												hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Source Name
+												</b>
+											</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: rgb(219, 95, 12) !important;">
+												It's
+												been 1
+												hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Source Name
+												</b>
+											</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: red !important;">
+												It's
+												been
+												more than 1 hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Webchat
+													AOD
+												</b>
+											</small>
+										</p>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li class="dropdown notification-list">
+							<a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+								href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+								<span class="account-user-avatar">
+									<img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+								</span>
+								<span>
+									<span>
+										<span class="account-user-name">Gaurav</span>
+										<span class="account-position">Admin</span>
+									</span>
+							</a>
+							<div
+								class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+								<a href="ChangePassword.html" class="dropdown-item notify-item">
+									<img src="assets/images/password.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Change Password</span>
+								</a>
+								<a href="Login page.html" class="dropdown-item notify-item">
+									<img src="assets/images/log-out.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Logout</span>
+								</a>
+							</div>
+						</li>
+					</ul>
+					<button class="button-menu-mobile open-left">
+						<img src="assets/images/menu.gif" alt="menu" style="border-radius:5px; height:40px;">
+					</button>
+				</div>
+				<div class="container-fluid">
+					<div class="row" style="margin-top:15px;">
+						<!-- Disposition Chart Start -->
+						<div class="col-12">
+							<details>
+								<summary>
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										Disposition
+										Data - Pending / Completed
+									</h4>
+								</summary>
+								<hr>
+								<!-- 🔹 Main Chart Filter -->
+
+								<div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+									<iframe src="disposition-chart.html"
+										style="width:100%; height:500px; border:none;"></iframe>
+								</div>
+							</details>
+						</div>
+						<!-- Disposition Chart End -->
+
+						<!-- Tat Chart Start -->
+						<div class="col-12">
+							<details>
+								<summary>
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										TAT
+										Data - Compliance / Non-Compliance
+									</h4>
+								</summary>
+								<hr>
+								<div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+									<iframe src="tat-chart.html"
+										style="width:100%; height:500px; border:none;"></iframe>
+								</div>
+							</details>
+						</div>
+						<!-- Tat Chart End -->
+
+						<!-- Aspect Chart Start -->
+						<div class=" col-12">
+							<details>
+								<summary>
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										Aspect Data
+									</h4>
+								</summary>
+								<hr>
+								<iframe src="aspect-chart.html" style="width:100%; height:550px; border:none;"></iframe>
+							</details>
+						</div>
+						<!-- Aspect Chart End -->
+
+						<!-- Productivity Chart Start -->
+						<div class="col-12">
+							<details>
+								<summary>
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										Advisor Productivity
+									</h4>
+								</summary>
+								<hr>
+								<iframe src="productivity-chart.html"
+									style="width:100%; height:550px; border:none;"></iframe>
+							</details>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer class="footer" style="background-color:#fff;"></footer>
+	<script src="assets/js/vendor.min.js"></script>
+	<script src="assets/js/app.min.js"></script>
+	<script src="assets/js/table search int base.js"></script>
+	<script src="assets/js/row bg.js"></script>
+	<script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+	<script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+	<script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+	<script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+	<script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+	<script src="assets/js/vendor/Chart.bundle.min.js"></script>
+	<script src="assets/js/summary.js"></script>
+	<!-- third party js ends -->
+	<!-- demo app -->
+	<script src="assets/js/pages/demo.dashboard-projects.js"></script>
+	<!-- JavaScript -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</body>
+
+</html>

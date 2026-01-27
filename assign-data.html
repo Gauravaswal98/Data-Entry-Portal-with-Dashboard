@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Assign Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <link rel="shortcut icon" href="assets/images/tablogo.png">
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <style>
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: left;
+        }
+
+        .appointment-table {
+            max-height: 280px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 8px;
+            font-size: 14px;
+            border: none;
+        }
+
+        .appointment-table table th {
+            padding: 8px;
+            font-size: 14px;
+            background-color: rgb(242, 242, 242);
+            color: #585858;
+            border: 1px solid #ffffff;
+            border-top: none;
+            border-left: none;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+
+        /* Ensures the dropdown appears above all elements */
+        .select2-container {
+            z-index: 999999 !important;
+            position: relative;
+        }
+
+        .select2-container--open {
+            z-index: 999999 !important;
+            position: relative;
+        }
+
+        .select2-dropdown {
+            z-index: 999999 !important;
+        }
+
+        /* Optional: Fix container issues */
+        .select2-selection--multiple {
+            background-color: #F1F3FA !important;
+            position: relative;
+            z-index: 9999;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            color: blue;
+            text-align-last: center;
+        }
+
+        .sr {
+            text-align-last: center;
+        }
+
+        /* apply only to your table #table */
+        #table th.checkbox-cell,
+        #table td.checkbox-cell {
+            /* safest centering for table cells */
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            vertical-align: middle;
+            /* fallback */
+            padding: 0.5rem;
+            /* adjust as needed */
+        }
+
+        /* tiny checkbox, remove default margins */
+        #table input.row-select {
+            margin: 5px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .toggle-btn i {
+            font-size: 18px;
+            color: orangered
+        }
+
+        .highlight {
+            background-color: #fffeea !important;
+        }
+    </style>
+</head>
+
+<body class="loading"
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+    <div class="loader"></div>
+    <div class="wrapper">
+
+        <div id="sidebar-container"></div>
+
+        <!-- JavaScript to load sidebar.html and set active class -->
+        <script>
+            fetch('sidemenu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+
+                    const currentPage = window.location.pathname.split('/').pop();
+                    const navLinks = document.querySelectorAll('.side-nav-link');
+
+                    navLinks.forEach(link => {
+                        const linkPage = link.getAttribute('href');
+
+                        // Mapping sub-pages to main links
+                        const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(currentPage) && linkPage === 'disposition-data.html';
+                        const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(currentPage) && linkPage === 'helpline-aod.html';
+                        const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) && linkPage === 'webchat-aod.html';
+
+                        // Final condition to set active class
+                        if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+        </script>
+
+        <div class="content-page" style="background-color: #e7e5e5;">
+            <div class="content" style="background-color:none; margin-bottom: -24px;">
+
+                <div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+                    <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="dropdown notification-list d-lg-none">
+                            <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="false" aria-expanded="false">
+                                <i class="dripicons-search noti-icon"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                <form class="p-3">
+                                    <input type="text" class="form-control" placeholder="Search ..."
+                                        aria-label="Recipient's username">
+                                </form>
+                            </div>
+                        </li>
+                        <li class="notification-list" style="margin-top: 15px;">
+                            <a class="nav-link end-bar-toggle" href="notepad.html">
+                                <img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+                                    style=" border-radius:5px; height: 40px;">
+                                Add Notes
+                            </a>
+                        </li>
+
+                        <li class="dropdown notification-list">
+                            <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+                                href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+                                <span class="account-user-avatar">
+                                    <img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+                                </span>
+                                <span>
+                                    <span>
+                                        <span class="account-user-name">Gaurav</span>
+                                        <span class="account-position">Admin</span>
+                                    </span>
+                            </a>
+                            <div
+                                class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+
+                                <a href="ChangePassword.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/password.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Change Password</span>
+                                </a>
+
+                                <a href="Login page.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/log-out.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <button class="button-menu-mobile open-left">
+                        <img src="assets/images/menu.gif" alt="img" style="border-radius:5px; height:40px;">
+                    </button>
+                </div>
+
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-flex justify-content-between">
+                                <h1 class="page-title"><img src="assets/images/assign.gif" alt="img"
+                                        style="border-radius:5px; height: 40px;">
+                                    Assign Data</h1>
+                                <div class="app-search dropdown float-end"
+                                    style="background-color:none; margin: 2% 0 0 0;">
+                                    <form>
+                                        <div>
+                                            <input type="text" class="form-control" placeholder="Search..." id="gfg"
+                                                style="background-color: #fff; border-radius: 5px;">
+                                            <span class="search-icon">
+                                                <img src="assets/images/searchicon.png" alt="img"
+                                                    style="height:20px;"></span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card" style="background-color: none; max-height: fit-content; height: 90px;">
+                                <div class="card-body">
+                                    <div class="tab-content">
+                                        <div class="tab-pane show active" id="inline-form-preview"
+                                            style=" overflow: auto;">
+                                            <div class="col-lg-6" style="width:100%; background-color: none;">
+                                                <form action="" method="GET"
+                                                    class="d-flex justify-content-between gap-1 overflow-auto"
+                                                    style="background-color: none;">
+                                                    <div title="Select assign type">
+                                                        <select id="assign" name="assign" class=" int-productdata"
+                                                            style="background-color: #F1F3FA;border: 1px solid #ebebeb;">
+                                                            <option value disabled selected>Assign
+                                                                Type
+                                                            </option>
+                                                            <option value="Fresh-Assign">
+                                                                Fresh-Assign</option>
+                                                            <option value="Re-Assign">
+                                                                Re-Assign</option>
+                                                        </select>
+                                                    </div>
+                                                    <div title="Select advisor">
+                                                        <select id="select_agent" name="select_agent"
+                                                            class=" int-productdata"
+                                                            style="background-color: #F1F3FA;border: 1px solid #ebebeb; width: 150px;">
+                                                            <option value disabled selected>Advisor
+                                                            </option>
+                                                            <option value="A">
+                                                                A</option>
+                                                            <option value="B">
+                                                                B</option>
+                                                        </select>
+                                                    </div>
+                                                    <div id="dispositionDiv" title="Select region for your data">
+                                                        <select id="select_region" name="select_region"
+                                                            class=" int-productdata"
+                                                            style="background-color: #F1F3FA;border: 1px solid #ebebeb;">
+                                                            <option value disabled selected="true">Disposition
+                                                                Type
+                                                            </option>
+                                                            <option value="Transfer To Warranty Helpline">Transfer To
+                                                                Warranty Helpline
+                                                            </option>
+                                                            <option value="Transfer To Helpline AOD">Transfer To
+                                                                Helpline AOD</option>
+                                                            <option value="Transfer To Webchat AOD">Transfer To Webchat
+                                                                AOD</option>
+                                                            <option value="Transfer To Helpline">Transfer To Helpline
+                                                            </option>
+                                                            <option value="Transfer To Smartcare">Transfer To Smartcare
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div title="Total Data Count">
+                                                        <input class="int-productdata" type="text" name="total_data"
+                                                            id="data_count" placeholder
+                                                            style="min-width: 65px; max-width: 65px; background-color: #F1F3FA;border: 1px solid #ebebeb;">
+                                                    </div>
+                                                    <div style="position: relative; display: inline-block;">
+                                                        <i class="mdi mdi-hand-pointing-down"
+                                                            style="position: absolute; left: 7px; top: 40%; font-size:20px; transform: translateY(-50%); color: #ff045c;"></i>
+                                                        <input class="int-productdata" type="text"
+                                                            value="Select Data From Table" readonly name="select_data"
+                                                            id="select_data" placeholder
+                                                            style="max-width: fit-content; background-color: #F1F3FA; border: 1px solid #ebebeb; padding-left: 30px;">
+                                                    </div>
+
+                                                    <!-- <div title="Select Contact to Assign">
+                                                        <select class="select2 int-productdata select2-multiple"
+                                                            data-toggle="select2" multiple="multiple"
+                                                            data-placeholder="Select Contacts..."
+                                                            style="background-color: #F1F3FA;border: 1px solid #d6d6d6; z-index: 999999 !important; width: 170px;">
+                                                            <option value="A">8357870339</option>
+                                                            <option value="B">9357870339</option>
+                                                            <option value="C">9957870339</option>
+                                                            <option value="D">9757870339</option>
+                                                        </select>
+                                                    </div> -->
+                                                    <div id="statusDiv" title="Select status for your data">
+                                                        <select id="data_status" name="data_status"
+                                                            class="int-productdata"
+                                                            style="background-color: #F1F3FA;border: 1px solid #ebebeb;">
+                                                            <option value disabled selected="true">Status
+                                                            </option>
+                                                            <option value="Pending">
+                                                                Pending</option>
+                                                            <option value="Complete">
+                                                                Complete</option>
+                                                        </select>
+                                                    </div>
+                                                    <div id="reassignDiv" title="Select Advisor for Re-Assign data">
+                                                        <select id="select_agent" name="select_agent"
+                                                            class=" int-productdata"
+                                                            style="background-color: #F1F3FA;border: 1px solid #ebebeb;">
+                                                            <option value disabled selected>Re-Assign
+                                                                To
+                                                            </option>
+                                                            <option value="A">
+                                                                A</option>
+                                                            <option value="B">
+                                                                B</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <button type="button"
+                                                            class="int-productdata btn btn-primary mb-2"
+                                                            title="Apply filters"
+                                                            style="display: flex; justify-content: space-between; gap:5px;"><img
+                                                                src=" assets/images/double-check.gif" alt="img"
+                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="max-height:320px; height:fit-content;">
+                                    <div class="tab-content">
+                                        <div class="tab-pane show active" id="responsive-preview">
+                                            <div class="appointment-table"
+                                                style="overflow-x:auto; overflow-y:auto; border: none;">
+                                                <table class="table table-bordered table-centered mb-0" id="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Select Data</th>
+                                                            <th scope="col">Toggle</th>
+                                                            <th scope="col">Sr. No.</th>
+                                                            <th scope="col">Data Status</th>
+                                                            <th scope="col">Mobile Number</th>
+                                                            <th scope="col">Customer Name</th>
+                                                            <th scope="col">Created Date</th>
+                                                            <th scope="col">Lead ID</th>
+                                                            <th scope="col">Last Modified</th>
+                                                            <th scope="col">Disposition</th>
+                                                            <th scope="col">Source</th>
+                                                            <th scope="col">Attempt 1</th>
+                                                            <th scope="col">Disposition Status 1</th>
+                                                            <th scope="col">Remarks 1</th>
+                                                            <th scope="col">Advisor Name</th>
+                                                            <th scope="col">Employee Code</th>
+                                                            <th scope="col">Attempt 2</th>
+                                                            <th scope="col">Disposition Status 2</th>
+                                                            <th scope="col">Remarks 2</th>
+                                                            <th scope="col">Advisor Name</th>
+                                                            <th scope="col">Employee Code</th>
+                                                            <th scope="col">Attempt 3</th>
+                                                            <th scope="col">Disposition Status 3</th>
+                                                            <th scope="col">Remarks 3</th>
+                                                            <th scope="col">Advisor Name</th>
+                                                            <th scope="col">Employee Code</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="geeks">
+                                                        <!-- Sr. No. 1 - Main Row -->
+                                                        <tr>
+                                                            <td class="checkbox-cell"><input type="checkbox"
+                                                                    class="row-select check" data-group="1"></td>
+                                                            <td class="toggle-btn" data-group="1"><i
+                                                                    class="uil uil-plus-circle"></i></td>
+                                                            <td class="sr">1</td>
+                                                            <td>Pending</td>
+                                                            <td>9876543210</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD123</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>NCT</td>
+                                                            <td>Transfer to Helpline</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                        <!-- Sr. No. 1 - Hidden Row -->
+                                                        <tr class="group-1" style="display:none;">
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td class="sr"></td>
+                                                            <td>Pending</td>
+                                                            <td>9876543210</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD123</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>Call Back</td>
+                                                            <td>Transfer to Smartcare</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                        <tr class="group-1" style="display:none;">
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td class="sr"></td>
+                                                            <td>Pending</td>
+                                                            <td>9876543210</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD123</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>NCT</td>
+                                                            <td>Transfer to Webchat AOD</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                        <!-- Sr. No. 2 - Main Row -->
+                                                        <tr>
+                                                            <td class="checkbox-cell"><input type="checkbox"
+                                                                    class="row-select check" data-group="2"></td>
+                                                            <td class="toggle-btn" data-group="2"><i
+                                                                    class="uil uil-plus-circle"></i></td>
+                                                            <td class="sr">2</td>
+                                                            <td>Pending</td>
+                                                            <td>7357870339</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD111</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>Service Lead Status</td>
+                                                            <td>Transfer to Helpline AOD</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                        <tr class="group-2" style="display:none;">
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td class="sr"></td>
+                                                            <td>Pending</td>
+                                                            <td>7357870339</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD111</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>Complaint Status</td>
+                                                            <td>Transfer to Helpline</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                        <tr class="group-2" style="display:none;">
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td class="sr"></td>
+                                                            <td>Pending</td>
+                                                            <td>7357870339</td>
+                                                            <td>John Doe</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>LD111</td>
+                                                            <td>2025-08-08</td>
+                                                            <td>Call Back</td>
+                                                            <td>Transfer to Webchat AOD</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                            <td>Data</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- end table-wrapper -->
+                                        </div> <!-- end preview-->
+                                    </div> <!-- end tab-content-->
+                                </div> <!-- end card body-->
+                            </div> <!-- end card -->
+                        </div> <!-- end col-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer" style="background-color:#fff;">
+
+    </footer>
+
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <script src="assets/js/table search.js"></script>
+    <script src="assets/js/table search int base.js"></script>
+
+    <script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+    <script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+    <script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".toggle-btn").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    let group = this.getAttribute("data-group");
+                    let rows = document.querySelectorAll(".group-" + group);
+
+                    rows.forEach(function (row) {
+                        if (row.style.display === "none") {
+                            row.style.display = "table-row";
+                            btn.innerHTML = '<i class="uil uil-minus-circle"></i>';
+                        } else {
+                            row.style.display = "none";
+                            btn.innerHTML = '<i class="uil uil-plus-circle"></i>';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('table');
+            if (!table) {
+                console.error('Table with id="table" not found');
+                return;
+            }
+
+            // Use delegation so dynamically added rows also work
+            table.addEventListener('change', function (e) {
+                const target = e.target;
+                if (!target.matches('.row-select')) return; // ignore other inputs
+
+                const group = target.dataset.group;
+                const checked = !!target.checked;
+
+                // current row (main row) highlight toggle
+                const mainRow = target.closest('tr');
+                toggleRowHighlight(mainRow, checked);
+
+                // find group rows and sync highlight + checkbox if present
+                if (group) {
+                    const groupRows = table.querySelectorAll(`.group-${CSS.escape(group)}`);
+                    groupRows.forEach(row => {
+                        const cb = row.querySelector('input.row-select');
+                        if (cb) cb.checked = checked; // if hidden rows have a checkbox
+                        toggleRowHighlight(row, checked);
+                    });
+                }
+
+                // debug (uncomment if needed)
+                // console.log('row-select changed:', { group, checked, mainRowCount: (group ? table.querySelectorAll(`.group-${group}`).length : 0) });
+            });
+
+            function toggleRowHighlight(row, on) {
+                if (!row) return;
+                row.classList.toggle('highlight', !!on);
+            }
+        });
+    </script>
+
+    <script>
+        window.addEventListener('load', function () {
+            const loader = document.querySelector('.loader');
+
+            // Measure the page load time
+            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+
+            // Calculate progress speed based on load time (larger load time, slower loader speed)
+            let duration = Math.max(1000, loadTime);  // Ensure the duration is at least 1 second
+
+            // Set loader progress (dynamically change width based on load time)
+            loader.style.transitionDuration = `${duration}ms`;  // Set the transition time dynamically
+            loader.style.width = '100%';  // Start the loader animation
+
+            // Hide the loader after it reaches 100% width
+            setTimeout(function () {
+                loader.style.display = 'none';
+            }, duration);  // Hide loader after the animation completes
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const assignDropdown = document.getElementById("assign");
+            const statusDiv = document.getElementById("statusDiv");
+            const reassignDiv = document.getElementById("reassignDiv");
+            const dispositionDiv = document.getElementById("dispositionDiv");
+
+            function updateFields() {
+                const selectedValue = assignDropdown.value;
+
+                if (selectedValue === "Fresh-Assign") {
+                    statusDiv.style.display = "none";
+                    reassignDiv.style.display = "none";
+                } else if (selectedValue === "Re-Assign") {
+                    statusDiv.style.display = "inline-block";
+                    reassignDiv.style.display = "inline-block";
+
+                    // ✅ This ensures statusDiv is placed after dispositionDiv
+                    if (dispositionDiv && statusDiv && dispositionDiv.nextElementSibling !== statusDiv) {
+                        dispositionDiv.insertAdjacentElement('afterend', statusDiv);
+                    }
+                } else {
+                    statusDiv.style.display = "none";
+                    reassignDiv.style.display = "none";
+                }
+            }
+
+            assignDropdown.addEventListener("change", updateFields);
+            updateFields(); // Initial trigger
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>MIS Data</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="assets/images/tablogo.png">
+	<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+	<link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+	<style>
+		thead,
+		tbody {
+			text-align-last: center;
+			text-wrap: nowrap;
+		}
+
+		tbody tr {
+			text-align-last: left;
+		}
+
+		.appointment-table {
+			max-height: 350px;
+			height: fit-content;
+		}
+
+		.appointment-table table td {
+			padding: 8px;
+			font-size: 14px;
+			border: none;
+		}
+
+		.appointment-table table th {
+			padding: 8px;
+			font-size: 14px;
+			background-color: #dddddd;
+			color: #585858;
+			border: 1px solid #ffffff;
+			border-top: none;
+			border-left: none;
+		}
+
+		.appointment-table table tbody tr {
+			margin-top: 50px;
+		}
+
+		/* Page loader style */
+		.loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 0;
+			/* Start with 0 width */
+			height: 4px;
+			background-color: #ce5a2c;
+			/* Initial color */
+			z-index: 9999;
+			transition: width 0.1s linear;
+			/* Smooth transition */
+		}
+
+		.toggle-btn {
+			cursor: pointer;
+			color: blue;
+			text-decoration: underline;
+			text-align-last: center;
+		}
+
+		.tc,
+		.sr {
+			text-align-last: center;
+		}
+
+		.toggle-btn i {
+			font-size: 16px;
+			color: #1f5cac;
+		}
+	</style>
+</head>
+
+<body class="loading"
+	data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+	<div class="loader"></div>
+	<div class="wrapper">
+
+		<div id="sidebar-container"></div>
+
+		<!-- JavaScript to load sidebar.html and set active class -->
+		<script>
+			fetch('sidemenu.html')
+				.then(response => response.text())
+				.then(data => {
+					document.getElementById('sidebar-container').innerHTML = data;
+					const currentPage = window.location.pathname.split('/').pop();
+					const navLinks = document.querySelectorAll('.side-nav-link');
+					navLinks.forEach(link => {
+						const linkPage = link.getAttribute('href');
+						// Mapping sub-pages to main links
+						const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(
+							currentPage) && linkPage === 'disposition-data.html';
+						const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(
+							currentPage) && linkPage === 'helpline-aod.html';
+						const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) &&
+							linkPage === 'webchat-aod.html';
+						// Final condition to set active class
+						if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+							link.classList.add('active');
+						}
+					});
+				});
+		</script>
+
+		<div class="content-page" style="background-color: #e7e5e5;">
+			<div class="content" style="background-color:none; margin-bottom: -24px;">
+
+				<div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+					<ul class="list-unstyled topbar-menu float-end mb-0">
+						<li class="dropdown notification-list d-lg-none">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+								role="button" aria-haspopup="false" aria-expanded="false">
+								<i class="dripicons-search noti-icon"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+								<form class="p-3">
+									<input type="text" class="form-control" placeholder="Search ..."
+										aria-label="Recipient's username">
+								</form>
+							</div>
+						</li>
+						<li class="notification-list" style="margin-top: 15px;">
+							<a class="nav-link end-bar-toggle" href="notepad.html">
+								<img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+									style=" border-radius:5px; height: 40px;">
+								Add Notes
+							</a>
+						</li>
+						<li class="dropdown notification-list" style="margin-top:20px;" title="Notifications">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown"
+								data-bs-auto-close="outside" href="#" role="button" aria-haspopup="false"
+								aria-expanded="false">
+								<img src="assets/images/notification.gif" alt="img"
+									class="dripicons-clipboard noti-icon" style=" border-radius:5px; height: 30px;">
+							</a>
+							<div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg">
+
+								<!-- item-->
+								<div class="dropdown-item noti-title" style="margin-bottom: -15px;">
+									<h5 class="m-0"><span class="float-end">
+											<img src="assets/images/callback-noti.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px; margin-top: -5px;">
+										</span>Call Back Notifications
+									</h5>
+								</div>
+								<hr />
+								<div style="max-height: 230px;" data-simplebar>
+									<!-- item-->
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at <font style="user-select: text; font-weight: 600;">
+												7357870339</font>
+											<small class="text-muted" style="color: #37a1be !important;">Almost 1
+												hour</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at <font style="user-select: text; font-weight: 600;">
+												7357870339</font>
+											<small class="text-muted" style="color: rgb(219, 95, 12) !important;">It's
+												been 1
+												hour</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at <font style="user-select: text; font-weight: 600;">
+												7357870339</font>
+											<small class="text-muted" style="color: red !important;">It's been
+												more than 1 hour</small>
+										</p>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li class="dropdown notification-list">
+							<a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+								href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+								<span class="account-user-avatar">
+									<img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+								</span>
+								<span>
+									<span>
+										<span class="account-user-name">Gaurav</span>
+										<span class="account-position">Admin</span>
+									</span>
+							</a>
+							<div
+								class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+
+								<a href="ChangePassword.html" class="dropdown-item notify-item">
+									<img src="assets/images/password.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Change Password</span>
+								</a>
+
+								<a href="Login page.html" class="dropdown-item notify-item">
+									<img src="assets/images/log-out.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Logout</span>
+								</a>
+							</div>
+						</li>
+
+					</ul>
+					<button class="button-menu-mobile open-left">
+						<img src="assets/images/menu.gif" alt="img" style="border-radius:5px; height:40px;">
+					</button>
+				</div>
+				<!-- end Topbar -->
+
+				<!-- Start Content-->
+				<div class="container-fluid">
+
+					<!-- start page title -->
+					<div class="row">
+						<div class="col-12">
+							<div class="page-title-box d-flex justify-content-between" style="background-color:none;">
+								<h4 class="page-title"><img src="assets/images/files.gif" alt="img"
+										style="border-radius:5px; height: 40px;">&nbsp;MIS Data</h4>
+
+								<div class="app-search dropdown float-end"
+									style="background-color:none; margin: 2% 0 0 0;">
+									<form>
+										<div>
+											<input type="text" class="form-control" placeholder="Search..." id="gfg"
+												style="background-color: #ffffff; border-radius: 5px;">
+											<span class="search-icon"> <img src="assets/images/searchicon.png" alt="img"
+													style="height:20px;">
+											</span>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- end page title -->
+					<div class="row" style="background-color:none;">
+						<div class="col-md-12">
+							<div class="card" style="background-color:none;">
+								<div class="card-body" style="height:85px">
+									<div class="tab-content">
+										<div class="tab-pane show active" id="inline-form-preview">
+											<div class="col-lg-6" style="min-width: 100%;">
+												<form action="ExampleFind" method="GET"
+													style="background-color:none; display: flex; justify-content: space-between; overflow: auto;">
+													<div class="box d-flex justify-content-between gap-1 width: 100%;
+                                                    max-width: fit-content;">
+														<div class="int-productdata"
+															style="display: flex; align-items: center; padding: 6px 14px; border-radius: 10px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: #fff0e6; color: #ff6600; border: 1px solid #ff6600; min-width: 120px;">
+															<span style="margin-right: 6px;">Pending:</span>
+															<span>6</span>
+														</div>
+
+														<div class="int-productdata"
+															style="margin-right: 5px; display: flex; align-items: center; padding: 6px 14px; border-radius: 10px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: #f0e6ff; color: #6600cc; border: 1px solid #b366ff; min-width: 120px;">
+															<span style="margin-right: 6px;">Completed:</span>
+															<span>0</span>
+														</div>
+													</div>
+													<div
+														style="display: flex; gap:10px; justify-content: space-between;">
+														<div title="Select region for your data">
+															<select id="select_region" name="select_region"
+																class=" int-productdata"
+																style="background-color: #F1F3FA;border: 1px solid #ebebeb; width:fit-content;">
+																<option disabled selected>Select
+																	Here</option>
+																<option value="Transfer To Warranty Helpline">Transfer
+																	To Warranty Helpline
+																</option>
+																<option value="Transfer To Helpline AOD">Transfer To
+																	Helpline AOD</option>
+																<option value="Transfer To Webchat AOD">Transfer To
+																	Webchat AOD</option>
+																<option value="Transfer To Helpline">Transfer To
+																	Helpline</option>
+																<option value="Transfer To Smartcare">Transfer To
+																	Smartcare</option>
+																<option value="Call Back">Call
+																	Back</option>
+																<option value="Call Complete">Call
+																	Complete</option>
+																<option value="Call disconnected by customer">Call
+																	disconnected by
+																	customer</option>
+																<option value="Complaint status">Complaint
+																	status</option>
+																<option value="NCT">NCT</option>
+																<option value="Partial Success">Partial
+																	Success</option>
+																<option value="Service Complaint Status">Service
+																	Complaint Status</option>
+																<option value="Service Lead status">Service
+																	Lead status</option>
+																<option value="Warranty related">Warranty
+																	related</option>
+															</select>
+														</div>
+														<div title="Select Status">
+															<select id="dataStatus" name="dataStatus"
+																class=" int-productdata"
+																style="background-color: #F1F3FA;border: 1px solid #ebebeb;">
+																<option value disabled selected="true">Status
+																</option>
+																<option>Complete</option>
+																<option>Pending</option>
+															</select>
+														</div>
+														<div title="Select data range for your data"
+															class="app-search dropdown">
+															<input name="range" type="text" class="form-control date"
+																data-toggle="date-picker" data-picker="true"
+																data-locale="{'format': 'DD/MM hh:mm A'}"
+																style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;"
+																value>
+															<span class="search-icon">
+																<img src="assets/images/daterange.gif" alt="img"
+																	style="border-radius:5px; height: 30px; margin-top: -5px;">
+															</span>
+														</div>
+														<div>
+															<button type="button"
+																class="int-productdata btn btn-primary mb-2"
+																title="Apply filters"
+																style="display: flex; justify-content: space-between; gap:5px;"><img
+																	src="assets/images/double-check.gif" alt="img"
+																	style="border-radius:5px; height: 30px; margin-top: -5px;">
+															</button>
+														</div>
+														<div>
+															<button type="button"
+																class="int-productdata btn btn-danger mb-2 me-2"
+																title="Download data"
+																style="display: flex; justify-content: space-between; gap:5px;"><img
+																	src="assets/images/download-folder.gif" alt="img"
+																	style="border-radius:5px; height: 30px; margin-top: -5px;"></button>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div> <!-- end col -->
+					<div class="row" style="background-color: none; ">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body"
+									style="max-height:550px; height:fit-content; background-color: none;">
+									<div class="tab-content">
+										<div class="tab-pane show active" id="responsive-preview">
+											<div style="overflow-x:auto; overflow-y:auto;" class="appointment-table">
+												<table class="table table-bordered table-centered mb-0" id="table">
+													<thead>
+														<tr>
+															<th scope="col">Toggle</th>
+															<th scope="col">Sr. No.</th>
+															<th scope="col">Delete</th>
+															<th scope="col">Edit</th>
+															<th scope="col">Data Status</th>
+															<th scope="col">Mobile Number</th>
+															<th scope="col">Customer Name</th>
+															<th scope="col">Created Date</th>
+															<th scope="col">Lead ID</th>
+															<th scope="col">Last Modified</th>
+															<th scope="col">Disposition</th>
+															<th scope="col">Source</th>
+															<th scope="col">Attempt 1</th>
+															<th scope="col">Disposition Status 1</th>
+															<th scope="col">Remarks 1</th>
+															<th scope="col">Advisor Name</th>
+															<th scope="col">Employee Code</th>
+															<th scope="col">Attempt 2</th>
+															<th scope="col">Disposition Status 2</th>
+															<th scope="col">Remarks 2</th>
+															<th scope="col">Advisor Name</th>
+															<th scope="col">Employee Code</th>
+															<th scope="col">Attempt 3</th>
+															<th scope="col">Disposition Status 3</th>
+															<th scope="col">Remarks 3</th>
+															<th scope="col">Advisor Name</th>
+															<th scope="col">Employee Code</th>
+														</tr>
+													</thead>
+													<tbody id="geeks">
+														<!-- Sr. No. 1 - Main Row -->
+														<tr>
+															<td class="toggle-btn" data-group="1"><i
+																	class="uil uil-plus-circle"></i></td>
+															<td class="sr">1</td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>9876543210</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD123</td>
+															<td>2025-08-08</td>
+															<td>NCT</td>
+															<td>Transfer to Helpline</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<!-- Sr. No. 1 - Hidden Row -->
+														<tr class="group-1" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>9876543210</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD123</td>
+															<td>2025-08-08</td>
+															<td>Call Back</td>
+															<td>Transfer to Smartcare</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<tr class="group-1" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>9876543210</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD123</td>
+															<td>2025-08-08</td>
+															<td>NCT</td>
+															<td>Transfer to Webchat AOD</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<!-- Sr. No. 2 - Main Row -->
+														<tr>
+															<td class="toggle-btn" data-group="2"><i
+																	class="uil uil-plus-circle"></i></td>
+															<td class="sr">2</td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Service Lead Status</td>
+															<td>Transfer to Helpline AOD</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<tr class="group-2" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Complaint Status</td>
+															<td>Transfer to Helpline</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<tr class="group-2" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Call Back</td>
+															<td>Transfer to Webchat AOD</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<!-- Sr. No. 3 - Main Row -->
+														<tr>
+															<td class="toggle-btn" data-group="3"><i
+																	class="uil uil-plus-circle"></i></td>
+															<td class="sr">3</td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Service Lead Status</td>
+															<td>Transfer to Helpline AOD</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<tr class="group-3" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Complaint Status</td>
+															<td>Transfer to Helpline</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+														<tr class="group-3" style="display:none;">
+															<td></td>
+															<td class="sr"></td>
+															<td class="tc"><a href="#"><i class="uil-trash-alt"></i></a>
+															</td>
+															<td class="tc"><a href="transfer-to-helpline.html"><i
+																		class="uil-pen"></i></a></td>
+															<td>Pending</td>
+															<td>7357870339</td>
+															<td>John Doe</td>
+															<td>2025-08-08</td>
+															<td>LD111</td>
+															<td>2025-08-08</td>
+															<td>Call Back</td>
+															<td>Transfer to Webchat AOD</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+															<td>Data</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- container -->
+
+			</div> <!-- content -->
+			<!-- Footer Start -->
+			<footer class="footer" style="background-color: #fff;">
+
+			</footer>
+			<!-- end Footer -->
+
+			<!-- bundle -->
+			<script src="assets/js/vendor.min.js"></script>
+			<script src="assets/js/app.min.js"></script>
+			<script src="assets/js/table search.js"></script>
+			<script src="assets/js/table search int base.js"></script>
+			<script src="assets/js/row bg.js"></script>
+
+			<!-- third party js -->
+			<script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+			<script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+			<script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+			<script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+			<script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+			<!-- Begin page -->
+			<script>
+				document.addEventListener("DOMContentLoaded", function () {
+					document.querySelectorAll(".toggle-btn").forEach(function (btn) {
+						btn.addEventListener("click", function () {
+							let group = this.getAttribute("data-group");
+							let rows = document.querySelectorAll(".group-" + group);
+
+							rows.forEach(function (row) {
+								if (row.style.display === "none") {
+									row.style.display = "table-row";
+									btn.innerHTML = '<i class="uil uil-minus-circle"></i>';
+								} else {
+									row.style.display = "none";
+									btn.innerHTML = '<i class="uil uil-plus-circle"></i>';
+								}
+							});
+						});
+					});
+				});
+			</script>
+			<script>
+				window.addEventListener('load', function () {
+					const loader = document.querySelector('.loader');
+					// Measure the page load time
+					const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+					// Calculate progress speed based on load time (larger load time, slower loader speed)
+					let duration = Math.max(1000, loadTime); // Ensure the duration is at least 1 second
+					// Set loader progress (dynamically change width based on load time)
+					loader.style.transitionDuration = `${duration}ms`; // Set the transition time dynamically
+					loader.style.width = '100%'; // Start the loader animation
+					// Hide the loader after it reaches 100% width
+					setTimeout(function () {
+						loader.style.display = 'none';
+					}, duration); // Hide loader after the animation completes
+				});
+			</script>
+
+</body>
+
+</html>

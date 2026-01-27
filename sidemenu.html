@@ -1,0 +1,191 @@
+<style>
+  .h-100 {
+    background-image: url('assets/images/sidewali1.jpg');
+    /* Replace with your image path */
+    background-size: cover;
+    /* Ensure the background covers the entire div */
+    background-position: center;
+    /* Center the image */
+    background-repeat: no-repeat;
+    /* Prevent repetition */
+    overflow: hidden;
+    /* Ensures no content spills out */
+    border-radius: 10px;
+    /* Optional: Adds rounded corners */
+  }
+
+  .glass-effect {
+    background-color: rgba(0, 0, 0, 0.1);
+    /* Semi-transparent dark background */
+    backdrop-filter: blur(4px);
+    /* Glass blur effect */
+    -webkit-backdrop-filter: blur(4px);
+    /* Safari support */
+    border-radius: 10px;
+    /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    /* Depth */
+    /* Prevent content spill */
+    margin: 10px;
+    /* Adds spacing around the list */
+    margin-top: 20px;
+  }
+
+  .side-nav-item {
+    width: 100%;
+    /* Full width */
+  }
+
+  .side-nav-link {
+    display: flex;
+    /* Horizontal alignment for icon and text */
+    align-items: center;
+    /* Vertical centering */
+    justify-content: flex-start;
+    /* Align text and icon to the left */
+    white-space: nowrap;
+    /* Prevent text wrapping */
+    overflow: hidden;
+    /* Hide overflowing text */
+    text-overflow: ellipsis;
+    /* Add ellipsis for truncated text */
+    width: 100%;
+    /* Full width for links */
+    padding: 10px 15px;
+    /* Inner spacing */
+    border-radius: 5px;
+    /* Rounded corners for links */
+    text-decoration: none;
+    /* Remove underline */
+    color: white;
+    /* White text color */
+    font-weight: 500;
+    /* Slightly bold */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Smooth hover effect */
+  }
+
+  .side-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Light background on hover */
+    color: #fff;
+    /* Change text color on hover */
+  }
+
+  /* Highlight the active sidebar link */
+  .side-nav-link.active {
+    background-color: #e2bcee46;
+    /* Dark background for active link */
+    color: #ffffff;
+    /* White text color for active link */
+    font-weight: bold;
+    /* Optional: Make the active link bold */
+  }
+
+  .side-nav-link i {
+    margin-right: 10px;
+    /* Space between icon and text */
+    flex-shrink: 0;
+    /* Prevent icon from resizing */
+    color: white;
+  }
+
+  .side-nav-link span {
+    margin-right: 10px;
+    /* Space between icon and text */
+    flex-shrink: 0;
+    /* Prevent icon from resizing */
+    color: white;
+  }
+
+  .video-container {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+    /* Adjust height if needed */
+    margin-top: -40px;
+    /* Pull the video upwards */
+  }
+
+  .overlay-text {
+    position: absolute;
+    width: 100%;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  .logo-lg video {
+    object-fit: cover;
+    width: 100%;
+    /* Make the video fill the span horizontally */
+  }
+</style>
+<div class="leftside-menu" style="background-image: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);">
+  <a href="#" class="logo text-center logo-light">
+    <span class="logo-lg">
+      <div class="video-container">
+        <video class="video-bg" autoplay loop muted>
+          <source src="assets/video/2.mp4" type="video/mp4">
+        </video>
+        <div class="overlay-text">Tiger Team
+        </div>
+      </div>
+    </span>
+    <span class="logo-sm" style="background-image: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);">
+      <img src="assets/images/crm.gif" style="height:60px; border-radius: 5px;" alt="logo">
+    </span>
+  </a>
+  <div class="h-100" id="leftside-menu-container" data-simplebar>
+    <!-- <ul class="side-nav glass-effect"
+						style="background: rgb(54,0,52);
+					background: radial-gradient(circle, rgba(54,0,52,1) 28%, rgba(15,0,28,1) 77%);">
+						<li class="brand-heading">
+							<a href="#" class="side-nav-link">
+								<span class="title">Tiger Team</span>
+								<span class="subtitle">Tiger Team</span>
+							</a>
+						</li>
+					</ul> -->
+    <ul class="side-nav glass-effect">
+      <li class="side-nav-item">
+        <a href="Dashboard.html" class="side-nav-link">
+          <i class="uil-home-alt"></i>
+          <span> Dashboard </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
+        <a href="disposition-data.html" class="side-nav-link">
+          <i class="uil-database"></i>
+          <span>MIS Data </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
+        <a href="assign-data.html" class="side-nav-link">
+          <i class="uil-data-sharing"></i>
+          <span> Assign Data </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
+        <a href="upload-files.html" class="side-nav-link">
+          <i class="uil-upload-alt"></i>
+          <span> Upload Files </span>
+        </a>
+      </li>
+      <li class="side-nav-item">
+        <a href="Users.html" class="side-nav-link">
+          <i class="uil-users-alt"></i>
+          <span> Users </span>
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+
+</div>

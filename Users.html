@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/tablogo.png">
+    <!-- App css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <style>
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: center;
+        }
+
+        .appointment-table {
+            max-height: 270px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 1px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+    </style>
+</head>
+
+<body class="loading"
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+    <div class="loader"></div>
+    <div class="wrapper">
+
+        <div id="sidebar-container"></div>
+
+        <!-- JavaScript to load sidebar.html and set active class -->
+        <script>
+            fetch('sidemenu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+
+                    const currentPage = window.location.pathname.split('/').pop();
+                    const navLinks = document.querySelectorAll('.side-nav-link');
+
+                    navLinks.forEach(link => {
+                        const linkPage = link.getAttribute('href');
+
+                        // Mapping sub-pages to main links
+                        const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(currentPage) && linkPage === 'disposition-data.html';
+                        const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(currentPage) && linkPage === 'helpline-aod.html';
+                        const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) && linkPage === 'webchat-aod.html';
+
+                        // Final condition to set active class
+                        if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+        </script>
+
+        <div class="content-page" style="background-color: #e7e5e5;">
+            <div class="content" style="background-color:none; margin-bottom: -24px;">
+
+                <div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+                    <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="dropdown notification-list d-lg-none">
+                            <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="false" aria-expanded="false">
+                                <i class="dripicons-search noti-icon"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                <form class="p-3">
+                                    <input type="text" class="form-control" placeholder="Search ..."
+                                        aria-label="Recipient's username">
+                                </form>
+                            </div>
+                        </li>
+                        <li class="notification-list" style="margin-top: 15px;">
+                            <a class="nav-link end-bar-toggle" href="notepad.html">
+                                <img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+                                    style=" border-radius:5px; height: 40px;">
+                                Add Notes
+                            </a>
+                        </li>
+
+                        <li class="dropdown notification-list">
+                            <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+                                href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+                                <span class="account-user-avatar">
+                                    <img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+                                </span>
+                                <span>
+                                    <span>
+                                        <span class="account-user-name">Gaurav</span>
+                                        <span class="account-position">Admin</span>
+                                    </span>
+                            </a>
+                            <div
+                                class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+
+                                <a href="ChangePassword.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/password.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Change Password</span>
+                                </a>
+
+                                <a href="Login page.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/log-out.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <button class="button-menu-mobile open-left">
+                        <img src="assets/images/menu.gif" alt="img" style="border-radius:5px; height:40px;">
+                    </button>
+                </div>
+                <!-- end Topbar -->
+                <!-- Start Content-->
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box">
+                                <h4 class="page-title">
+                                    <img src="assets/images/user.gif" alt="img"
+                                        style="border-radius:5px; height: 40px;">
+                                    &nbsp;Manage Users
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+                    <div class="row" style="margin-top:-10px; background-color:none;">
+                        <div class="col-md-12">
+                            <div class="card" style="background-color:none;">
+                                <div class="card-body" style="height:85px;">
+                                    <div class="tab-content">
+                                        <div class="tab-pane show active" id="inline-form-preview">
+                                            <div class="col-auto"
+                                                style="background-color: none; display:flex; justify-content: space-between;">
+                                                <div class="app-search dropdown">
+                                                    <form>
+                                                        <div>
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Search..." id="gfg"
+                                                                style="border: 1px solid #ebebeb; border-radius: 5px;">
+                                                            <span class="search-icon">
+                                                                <img src="assets/images/searchicon.png" alt="img"
+                                                                    style="height:20px;"></span>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div
+                                                    style="background-color:none;display: flex; justify-content: space-around; gap: 5px;">
+                                                    <a href="Add user.html">
+                                                        <button type="submit" class="btn int-productdata btn-primary">
+                                                            <img src="assets/images/add-user.gif" alt="img"
+                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                            Add User
+                                                        </button>
+                                                    </a>
+                                                    <a href="#">
+                                                        <button type="submit" class="btn int-productdata btn-success">
+                                                            <img src="assets/images/padlock.gif" alt="img"
+                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                            Unlock
+                                                        </button>
+                                                    </a>
+                                                    <a href="TempPassword.html">
+                                                        <button type="submit" class="int-productdata btn btn-info">
+                                                            <img src="assets/images/password.gif" alt="img"
+                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                            OTPs
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card -->
+                            </div>
+                            <!-- end col -->
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:5px;">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="max-height:350px; height:fit-content;">
+                                    <div class="tab-content">
+                                        <div class="tab-pane show active" id="responsive-preview">
+                                            <div style="overflow-x:auto; overflow-y:auto;" class="appointment-table">
+                                                <table class="table table-bordered table-centered mb-0" id="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" style="text-align: center;">Sr.
+                                                                No.</th>
+                                                            <th scope="col" style="text-align: center;">User
+                                                                Name</th>
+                                                            <th scope="col" style="text-align: center;">Employee
+                                                                code</th>
+                                                            <th scope="col" style="text-align: center;">Edit
+                                                            </th>
+                                                            <th scope="col" style="text-align: center;">Delete
+                                                            </th>
+                                                            <th scope="col" style="text-align: center;">Lock
+                                                                Status
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="geeks">
+                                                        <tr>
+                                                            <td style="text-align: center;"></td>
+                                                            <td style="text-align: center;"></td>
+                                                            <td style="text-align: center;"></td>
+                                                            <td class="d-flex justify-content-center">
+                                                                <a href="Edit user.html">
+                                                                    <i class="mdi mdi-pencil me-1"></i>
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                <form action="deletes" method="post"
+                                                                    class="d-flex justify-content-center">
+                                                                    <a href="#">
+                                                                        <i class="mdi mdi-delete me-1">
+                                                                        </i>
+                                                                    </a>
+                                                                </form>
+                                                            </td>
+                                                            <td>
+                                                                <i class="mdi mdi-lock-open me-1"
+                                                                    style="color: green;"></i>
+                                                                <i class="mdi mdi-lock me-1" style="color: red;"></i>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- end preview-->
+                                    </div>
+                                    <!-- end tab-content-->
+                                </div>
+                                <!-- end card body-->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- end col-->
+                    </div>
+                    <!-- end row-->
+                </div>
+                <!-- container -->
+            </div>
+            <!-- content -->
+            <!-- Footer Start -->
+            <footer class="footer" style="background-color:#fff;"></footer>
+            <!-- end Footer -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- END wrapper -->
+    <!-- bundle -->
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <script src="assets/js/table search.js"></script>
+    <script src="assets/js/table search int base.js"></script>
+    <script src="assets/js/row bg.js"></script>
+    <!-- third party js -->
+    <script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+    <script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+    <script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+    <!-- third party js ends -->
+    <script>
+        window.addEventListener('load', function () {
+            const loader = document.querySelector('.loader');
+
+            // Measure the page load time
+            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+
+            // Calculate progress speed based on load time (larger load time, slower loader speed)
+            let duration = Math.max(1000, loadTime);  // Ensure the duration is at least 1 second
+
+            // Set loader progress (dynamically change width based on load time)
+            loader.style.transitionDuration = `${duration}ms`;  // Set the transition time dynamically
+            loader.style.width = '100%';  // Start the loader animation
+
+            // Hide the loader after it reaches 100% width
+            setTimeout(function () {
+                loader.style.display = 'none';
+            }, duration);  // Hide loader after the animation completes
+        });
+    </script>
+</body>
+
+</html>

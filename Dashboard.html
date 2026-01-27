@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <link rel="shortcut icon" href="assets/images/tablogo.png" type="png">
+    <link href="assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <style>
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: left;
+        }
+
+        .appointment-table {
+            max-height: 300px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        #tailwind-table .sticky {
+            position: sticky;
+        }
+
+        #tailwind-table .left-0 {
+            left: 0;
+        }
+
+        #tailwind-table .right-0 {
+            right: 0;
+        }
+
+        #tailwind-table .top-0 {
+            top: 0;
+        }
+
+        #tailwind-table .z-10 {
+            z-index: 10;
+        }
+
+        #tailwind-table .z-20 {
+            z-index: 20;
+        }
+
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+
+
+        .employee-performance-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .employee-performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-spacing: 0;
+        }
+
+        .employee-performance-table th,
+        .employee-performance-table td {
+            padding: 8px 12px;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .employee-performance-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #0b4d99;
+            z-index: 2;
+        }
+
+        .employee-performance-table tfoot td {
+            position: sticky;
+            bottom: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 1;
+            font-weight: bold;
+        }
+
+        .employee-performance-table .deficit-alert {
+            color: red;
+            font-weight: bold;
+        }
+
+        .advisor-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .advisor-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .advisor-table th,
+        .advisor-table td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+        }
+
+        .advisor-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .advisor-table tfoot th {
+            position: sticky;
+            bottom: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .advisor-table th.sticky.left-0,
+        .advisor-table td.sticky.left-0 {
+            position: sticky;
+            left: 0;
+            background-color: #aa69df;
+            z-index: 3;
+        }
+
+        .advisor-table td.sticky.right-0,
+        .advisor-table th.sticky.right-0 {
+            position: sticky;
+            right: 0;
+            background-color: #9966FF;
+            color: white;
+            z-index: 3;
+        }
+
+        /* Chart height reduced */
+        #dispositionBarChart {
+            height: 350px !important;
+        }
+
+        #tatComplianceBarChart {
+            height: 350px !important;
+        }
+
+        #tatadataChartCanvas {
+            height: 350px !important;
+        }
+
+        #employeeTransferChart {
+            height: 350px !important;
+        }
+
+        /* summary css */
+        /* // Collapsible Closed */
+        details {
+            max-width: 1500px;
+            margin: 1rem auto;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 .50rem 1rem rgba(0, 0, 0, 0.1);
+
+            summary {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 0;
+                transition: margin-bottom .4s;
+                position: relative;
+            }
+
+            /* // Disable browser default marker */
+            summary::-webkit-details-marker,
+            summary::marker {
+                content: "";
+                display: none;
+            }
+
+            /* // Custom marker */
+            summary::after {
+                content: "";
+                font-size: 1.5rem;
+                line-height: 1;
+                margin-right: 1rem;
+                cursor: pointer;
+                padding: .75rem;
+                display: grid;
+                place-content: center;
+                aspect-ratio: 1;
+                line-height: 0;
+                position: absolute;
+                top: -.5rem;
+                right: -1.5rem;
+                border-radius: 50%;
+            }
+
+            *:not(summary) {
+                animation-name: fade;
+                animation-duration: .4s;
+            }
+        }
+
+        /* // Collapsible OPEN */
+        details[open] {
+
+            /* // Custom marker */
+            summary {
+                margin-bottom: 1.5rem;
+
+                &::after {
+                    content: "";
+                }
+            }
+        }
+    </style>
+</head>
+
+<body class="loading"
+    data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+    <div class="loader"></div>
+    <div class="wrapper">
+        <div id="sidebar-container"></div>
+        <!-- JavaScript to load sidebar.html and set active class -->
+        <script>
+            fetch('sidemenu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    const currentPage = window.location.pathname.split('/').pop();
+                    const navLinks = document.querySelectorAll('.side-nav-link');
+                    navLinks.forEach(link => {
+                        const linkPage = link.getAttribute('href');
+                        // Mapping sub-pages to main links
+                        const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(
+                            currentPage) && linkPage === 'disposition-data.html';
+                        const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(
+                            currentPage) && linkPage === 'helpline-aod.html';
+                        const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) &&
+                            linkPage === 'webchat-aod.html';
+                        // Final condition to set active class
+                        if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+        </script>
+        <div class="content-page" style="background-color: #e7e5e5;">
+            <div class="content" style="background-color:none; margin-bottom: -24px;">
+                <div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+                    <ul class="list-unstyled topbar-menu float-end mb-0">
+                        <li class="dropdown notification-list d-lg-none">
+                            <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="false" aria-expanded="false">
+                                <i class="dripicons-search noti-icon"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+                                <form class="p-3">
+                                    <input type="text" class="form-control" placeholder="Search ..."
+                                        aria-label="Recipient's username">
+                                </form>
+                            </div>
+                        </li>
+                        <li class="notification-list" style="margin-top:15px;">
+                            <a class="nav-link end-bar-toggle" href="notepad.html">
+                                <img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+                                    style=" border-radius:5px; height: 40px;">
+                                Add Notes
+                            </a>
+                        </li>
+                        <li class="dropdown notification-list" style="margin-top:20px;" title="Notifications">
+                            <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" href="#" role="button" aria-haspopup="false"
+                                aria-expanded="false">
+                                <img src="assets/images/notification.gif" alt="img"
+                                    style=" border-radius:5px; height: 30px;">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg">
+                                <!-- item-->
+                                <div class="dropdown-item noti-title" style="margin-bottom: -15px;">
+                                    <h5 class="m-0">
+                                        <span class="float-end">
+                                            <img src="assets/images/callback-noti.gif" alt="img"
+                                                class="dripicons-clipboard noti-icon"
+                                                style=" border-radius:5px; height: 30px; margin-top: -5px;">
+                                        </span>
+                                        Call Back Notifications
+                                    </h5>
+                                </div>
+                                <hr>
+                                <div style="max-height: 230px;" data-simplebar>
+                                    <!-- item-->
+                                    <div class="dropdown-item notify-item">
+                                        <div class="notify-icon">
+                                            <img src="assets/images/call-back.gif" alt="img"
+                                                class="dripicons-clipboard noti-icon"
+                                                style=" border-radius:5px; height: 30px;">
+                                        </div>
+                                        <p class="notify-details" style="user-select: none;">
+                                            Please call back at
+                                            <font style="user-select: text; font-weight: 600;">
+                                                7357870339
+                                            </font>
+                                            <small class="text-muted" style="color: rgb(238, 161, 17) !important;">
+                                                Almost
+                                                1
+                                                hour :
+                                                <b style="font-weight: 700; font-size: 12px;">
+                                                    Source Name
+                                                </b>
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="dropdown-item notify-item">
+                                        <div class="notify-icon">
+                                            <img src="assets/images/call-back.gif" alt="img"
+                                                class="dripicons-clipboard noti-icon"
+                                                style=" border-radius:5px; height: 30px;">
+                                        </div>
+                                        <p class="notify-details" style="user-select: none;">
+                                            Please call back at
+                                            <font style="user-select: text; font-weight: 600;">
+                                                7357870339
+                                            </font>
+                                            <small class="text-muted" style="color: rgb(219, 95, 12) !important;">
+                                                It's
+                                                been 1
+                                                hour :
+                                                <b style="font-weight: 700; font-size: 12px;">
+                                                    Source Name
+                                                </b>
+                                            </small>
+                                        </p>
+                                    </div>
+                                    <div class="dropdown-item notify-item">
+                                        <div class="notify-icon">
+                                            <img src="assets/images/call-back.gif" alt="img"
+                                                class="dripicons-clipboard noti-icon"
+                                                style=" border-radius:5px; height: 30px;">
+                                        </div>
+                                        <p class="notify-details" style="user-select: none;">
+                                            Please call back at
+                                            <font style="user-select: text; font-weight: 600;">
+                                                7357870339
+                                            </font>
+                                            <small class="text-muted" style="color: red !important;">
+                                                It's
+                                                been
+                                                more than 1 hour :
+                                                <b style="font-weight: 700; font-size: 12px;">
+                                                    Webchat
+                                                    AOD
+                                                </b>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="dropdown notification-list">
+                            <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+                                href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+                                <span class="account-user-avatar">
+                                    <img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+                                </span>
+                                <span>
+                                    <span>
+                                        <span class="account-user-name">Gaurav</span>
+                                        <span class="account-position">Admin</span>
+                                    </span>
+                            </a>
+                            <div
+                                class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+                                <a href="ChangePassword.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/password.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Change Password</span>
+                                </a>
+                                <a href="Login page.html" class="dropdown-item notify-item">
+                                    <img src="assets/images/log-out.gif" alt="img"
+                                        style="border-radius:5px; height: 30px;">
+                                    <span>Logout</span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                    <button class="button-menu-mobile open-left">
+                        <img src="assets/images/menu.gif" alt="menu" style="border-radius:5px; height:40px;">
+                    </button>
+                </div>
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box">
+                                <h4 class="page-title">Dashboard</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            <div class="float-end">
+                                                <img src="assets/images/active-user.gif" alt="img" style="height:45px;">
+                                            </div>
+                                            <h5 class="text mt-0">Active
+                                                Users
+                                            </h5>
+                                            <h3 class="mt-3 mb-3">
+                                                <span style="color:#58c9cf;">43</span>
+                                                <span style="color:#6866e1;">/</span>
+                                                <span style="color:#e1b666;">50</span>
+                                            </h3>
+                                            <p class="mb-0 text-muted">
+                                                <span class="text-primary me-2 fw-bold">86.0%</span>
+                                                <span class="text-nowrap">Users Active Today</span>
+                                                <span class="text-me-2 float-end"><i
+                                                        class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#e1b066;"></i> Total Users</span>
+                                                <span class="text-nowrap float-end" style="margin-right: 5px;"><i
+                                                        class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#58c9cf;"></i> Active Users</span>
+                                            </p>
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card-->
+                                </div> <!-- end col-->
+
+                                <div class="col-lg-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            <div class="float-end">
+                                                <img src="assets/images/productivity.gif" alt="img"
+                                                    style="height:45px;">
+                                            </div>
+                                            <h5 class="text mt-0">Work Progress
+                                            </h5>
+                                            <h3 class="mt-3 mb-3">
+                                                <span style="color:#58c9cf;">283</span>
+                                                <span style="color:#6866e1;">/</span>
+                                                <span style="color:#e1b666;">500</span>
+                                            </h3>
+                                            <p class="mb-0 text-muted">
+                                                <span class="text-primary fw-bold me-2">56.6%</span>
+                                                <span class="text-nowrap">Completed Today</span>
+                                                <span class="text-me-2 float-end"><i
+                                                        class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#e1b066;"></i> Total Data</span>
+                                                <span class="text-nowrap float-end" style="margin-right: 5px;"><i
+                                                        class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#58c9cf;"></i> Attempted</span>
+                                            </p>
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card-->
+                                </div> <!-- end col-->
+                            </div> <!-- end row -->
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            <div class="float-end">
+                                                <img src="assets/images/check.gif" alt="img" style="height:45px;">
+                                            </div>
+                                            <h5 class="text mt-0">Completion Status</h5>
+                                            <h3 class="mt-3 mb-3">
+                                                <span style="color:#58c9cf;">121</span>
+                                                <span style="color:#6866e1;">|</span>
+                                                <span style="color:#e1c066;">162</span>
+                                            </h3>
+                                            <p class="mb-0 text-muted">
+                                                <span class="text-me-2"><i class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#58c9cf;"></i> Completed
+                                                    (<b>Connected</b>)</span>
+                                                <span class="text-nowrap"><i class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#e1c066;"></i> Completed
+                                                    (<b>Not Connected</b>)</span>
+                                            </p>
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card-->
+                                </div> <!-- end col-->
+
+                                <div class="col-lg-6">
+                                    <div class="card widget-flat">
+                                        <div class="card-body">
+                                            <div class="float-end">
+                                                <img src="assets/images/TAT.gif" alt="img" style="height:45px;">
+                                            </div>
+                                            <h5 class="text mt-0" title="Growth">TAT Status</h5>
+                                            <h3 class="mt-3 mb-3">
+                                                <span style="color:#58c9cf;">283</span>
+                                                <span style="color:#6866e1;">|</span>
+                                                <span style="color:#e1c066;">217</span>
+                                            </h3>
+                                            <p class="mb-0 text-muted">
+                                                <span class="text-me-2"><i class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#58c9cf;"></i> Compliance</span>
+                                                <span class="text-nowrap"><i class="mdi mdi-checkbox-blank-circle"
+                                                        style="color:#e1c066;"></i> NON-Compliance</span>
+                                            </p>
+                                        </div> <!-- end card-body-->
+                                    </div> <!-- end card-->
+                                </div> <!-- end col-->
+                            </div> <!-- end row -->
+
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                    <div class="row">
+                        <div class="col-12">
+                            <details>
+                                <summary>
+                                    <h4 class="header-title">
+                                        <img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+                                        Disposition
+                                        Data - Pending / Completed
+                                    </h4>
+                                </summary>
+                                <hr>
+                                <!-- 🔹 Main Chart Filter -->
+                                <div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+                                    <div>
+                                        <label>
+                                            <strong>Select Disposition</strong>
+                                        </label>
+                                        <select id="pcdata" class="int-productdata form-select"
+                                            style="min-width: 200px;">
+                                            <option value="all" selected>Show All</option>
+                                            <option value="Transfer To Warranty Helpline">Transfer To Warranty
+                                                Helpline
+                                            </option>
+                                            <option value="Transfer To Helpline AOD">Transfer To Helpline AOD
+                                            </option>
+                                            <option value="Transfer To Webchat AOD">Transfer To Webchat AOD
+                                            </option>
+                                            <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                            <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                            <option value="Call Back">Call
+                                                Back</option>
+                                            <option value="Call Complete">Call
+                                                Complete</option>
+                                            <option value="Call disconnected by customer">Call
+                                                disconnected by
+                                                customer</option>
+                                            <option value="Complaint status">Complaint
+                                                status</option>
+                                            <option value="NCT">NCT</option>
+                                            <option value="Partial Success">Partial
+                                                Success</option>
+                                            <option value="Service Complaint Status">Service
+                                                Complaint Status</option>
+                                            <option value="Service Lead status">Service
+                                                Lead status</option>
+                                            <option value="Warranty related">Warranty
+                                                related</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <strong>
+                                                Select
+                                                Advisor
+                                            </strong>
+                                        </label>
+                                        <select id="pcadvisorFilter" class="int-productdata form-select"
+                                            style="min-width: 200px;">
+                                            <option value="Advisor A">
+                                                Advisor
+                                                A
+                                            </option>
+                                            <option value="Advisor B">
+                                                Advisor
+                                                B
+                                            </option>
+                                            <option value="Advisor C">
+                                                Advisor
+                                                C
+                                            </option>
+                                            <option value="all" selected>
+                                                Show
+                                                All
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-end">
+                                        <div>
+                                            <label>
+                                                <strong>
+                                                    Start
+                                                    Date
+                                                </strong>
+                                            </label>
+                                            <input type="date" id="pcStartDate" class="int-productdata form-control">
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <strong>
+                                                    End
+                                                    Date
+                                                </strong>
+                                            </label>
+                                            <input type="date" id="pcEndDate" class="int-productdata form-control">
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" id="pcapply" class="int-productdata btn btn-primary"
+                                                title="Apply filters"
+                                                style="display: flex; justify-content: space-between; gap:5px;">
+                                                <img src="assets/images/double-check.gif" alt="img"
+                                                    style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                            </button>
+                                            <button type="button" id="pcDownloadBtn"
+                                                class="int-productdata btn btn-danger" title="Download data"
+                                                style="display: flex; justify-content: space-between; gap:5px;">
+                                                <img src="assets/images/download-folder.gif" alt="img"
+                                                    style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <canvas id="dispositionBarChart"
+                                        style="margin-top: 30px; width: 100% !important; height: auto;"></canvas>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div class="col-12">
+                            <details>
+                                <summary>
+                                    <h4 class="header-title">
+                                        <img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+                                        TAT
+                                        Data - Compliance / Non-Compliance
+                                    </h4>
+                                </summary>
+                                <hr>
+                                <div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+                                    <div>
+                                        <label>
+                                            <strong>
+                                                TAT Chart -
+                                                Select
+                                                Page
+                                            </strong>
+                                        </label>
+                                        <select id="tatPageFilter" class="int-productdata form-select"
+                                            style="min-width: 200px;">
+                                            <option value="all" selected>Show All</option>
+                                            <option value="Transfer To Warranty Helpline">Transfer To Warranty
+                                                Helpline
+                                            </option>
+                                            <option value="Transfer To Helpline AOD">Transfer To Helpline AOD
+                                            </option>
+                                            <option value="Transfer To Webchat AOD">Transfer To Webchat AOD</option>
+                                            <option value="Transfer To Helpline">Transfer To Helpline</option>
+                                            <option value="Transfer To Smartcare">Transfer To Smartcare</option>
+                                            <option value="Call Back">Call
+                                                Back</option>
+                                            <option value="Call Complete">Call
+                                                Complete</option>
+                                            <option value="Call disconnected by customer">Call
+                                                disconnected by
+                                                customer</option>
+                                            <option value="Complaint status">Complaint
+                                                status</option>
+                                            <option value="NCT">NCT</option>
+                                            <option value="Partial Success">Partial
+                                                Success</option>
+                                            <option value="Service Complaint Status">Service
+                                                Complaint Status</option>
+                                            <option value="Service Lead status">Service
+                                                Lead status</option>
+                                            <option value="Warranty related">Warranty
+                                                related</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <strong>
+                                                Select
+                                                Advisor
+                                            </strong>
+                                        </label>
+                                        <select id="tatadvisorFilter" class="int-productdata form-select"
+                                            style="min-width: 200px;">
+                                            <option value="Advisor A">
+                                                Advisor
+                                                A
+                                            </option>
+                                            <option value="Advisor B">
+                                                Advisor
+                                                B
+                                            </option>
+                                            <option value="Advisor C">
+                                                Advisor
+                                                C
+                                            </option>
+                                            <option value="all" selected>
+                                                Show
+                                                All
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-end">
+                                        <div>
+                                            <label>
+                                                <strong>
+                                                    Start
+                                                    Date
+                                                </strong>
+                                            </label>
+                                            <input type="date" id="tatStartDate" class="int-productdata form-control">
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <strong>
+                                                    End
+                                                    Date
+                                                </strong>
+                                            </label>
+                                            <input type="date" id="tatEndDate" class="int-productdata form-control">
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" id="tatapply" class="int-productdata btn btn-primary"
+                                                title="Apply filters"
+                                                style="display: flex; justify-content: space-between; gap:5px;">
+                                                <img src="assets/images/double-check.gif" alt="img"
+                                                    style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                            </button>
+                                            <button type="button" id="tatDownloadBtn"
+                                                class="int-productdata btn btn-danger" title="Download data"
+                                                style="display: flex; justify-content: space-between; gap:5px;">
+                                                <img src="assets/images/download-folder.gif" alt="img"
+                                                    style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <canvas id="tatComplianceBarChart"
+                                        style="margin-top: 30px; width: 100% !important; height: auto;""></canvas>
+									</div>
+                            </details>
+                        </div>
+
+                        <div class=" col-12">
+                                        <details>
+                                            <summary>
+                                                <h4 class="header-title">
+                                                    <img src="assets/images/user-product.gif" alt="img"
+                                                        style="height:45px;">
+                                                    Aspect Data
+                                                </h4>
+                                            </summary>
+                                            <hr>
+                                            <ul class="nav nav-tabs nav-bordered mb-3">
+                                                <li class="nav-item">
+                                                    <a href="#input-types-preview" data-bs-toggle="tab"
+                                                        aria-expanded="false" class="nav-link active">
+                                                        View
+                                                        By Chart
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#input-types-code" data-bs-toggle="tab"
+                                                        aria-expanded="true" class="nav-link">
+                                                        View By Data
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <!-- end nav-->
+                                            <div class="tab-content">
+                                                <div class="tab-pane show active" id="input-types-preview">
+                                                    <div style="margin-bottom: 20px;">
+                                                        <select id="acpectemp" class="int-productdata">
+                                                            <option value="metric">Total (All Employees)
+                                                            </option>
+                                                            <option value="employee">Individual Employee
+                                                            </option>
+                                                        </select>
+                                                        <select id="employeeFilterChart" style="display:none;"
+                                                            class="int-productdata">
+                                                            <option value="Bhagyashree Krishna Yel">
+                                                                Bhagyashree
+                                                                Krishna
+                                                                Yel
+                                                            </option>
+                                                            <option value="Sajida Ansari">
+                                                                Sajida
+                                                                Ansari
+                                                            </option>
+                                                            <option value="Chhaya Digambar Narkar">
+                                                                Chhaya
+                                                                Digambar
+                                                                Narkar
+                                                            </option>
+                                                            <option value="Zeeshan Salim Glasswala">
+                                                                Zeeshan
+                                                                Salim
+                                                                Glasswala
+                                                            </option>
+                                                            <option value="Santosh Nirmal">
+                                                                Santosh
+                                                                Nirmal
+                                                            </option>
+                                                            <option value="Akshaya Dixit">
+                                                                Akshaya
+                                                                Dixit
+                                                            </option>
+                                                            <option value="Harshita Ghind">
+                                                                Harshita
+                                                                Ghind
+                                                            </option>
+                                                            <option value="Ashwini Ashok Kamble">
+                                                                Ashwini
+                                                                Ashok
+                                                                Kamble
+                                                            </option>
+                                                            <option value="Neeta Pawar">
+                                                                Neeta
+                                                                Pawar
+                                                            </option>
+                                                        </select>
+                                                        <label style="margin-left: 10px;">
+                                                            <strong>From</strong>
+                                                        </label>
+                                                        <input type="date" id="aspectStartDate" class="int-productdata">
+                                                        <label style="margin-left: 10px;">
+                                                            <strong>To</strong>
+                                                        </label>
+                                                        <input type="date" id="aspectEndDate" class="int-productdata">
+                                                        <button type="button" id="acpectapply"
+                                                            class="int-productdata btn btn-primary mb-2 float-end"
+                                                            title="Apply filters">
+                                                            <img src="assets/images/double-check.gif" alt="img"
+                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                        </button>
+                                                        <div id="tataChartContainer"
+                                                            style="width: 100%; max-width: 100%;">
+                                                            <canvas id="tatadataChartCanvas"
+                                                                style="margin-top: 30px; width: 100% !important; height: auto;">
+                                                            </canvas>
+                                                        </div>
+                                                    </div>
+                                                    <!-- end row-->
+                                                </div>
+                                                <!-- end preview-->
+                                                <div class="tab-pane" id="input-types-code">
+                                                    <div class="col-12">
+                                                        <div class="card widget-flat"
+                                                            style="max-height:500px; height:fit-content;">
+                                                            <div class="card-body">
+                                                                <div
+                                                                    class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+                                                                    <div class="app-search dropdown float-center">
+                                                                        <form>
+                                                                            <div>
+                                                                                <input type="text" class="form-control"
+                                                                                    placeholder="Search..." id="aa"
+                                                                                    style=" border-radius: 5px; background-color: #eeeeee;">
+                                                                                <span class="search-icon">
+                                                                                    <img src="assets/images/searchicon.png"
+                                                                                        alt="img" style="height:20px;">
+                                                                                </span>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                    <div title="Select data range for your data"
+                                                                        class="app-search dropdown">
+                                                                        <input name="range" type="text"
+                                                                            class="form-control date"
+                                                                            data-toggle="date-picker" data-picker="true"
+                                                                            data-locale="{'format': 'DD/MM hh:mm A'}"
+                                                                            style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;"
+                                                                            value>
+                                                                        <span class="search-icon">
+                                                                            <img src="assets/images/daterange.gif"
+                                                                                alt="img"
+                                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                        </span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button type="button"
+                                                                            class="int-productdata btn btn-primary mb-2"
+                                                                            title="Apply filters"
+                                                                            style="display: flex; justify-content: space-between; gap:5px;">
+                                                                            <img src="assets/images/double-check.gif"
+                                                                                alt="img"
+                                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="float-end">
+                                                                        <button type="button"
+                                                                            class="int-productdata btn btn-danger mb-2 me-2"
+                                                                            title="Download data"
+                                                                            style="display: flex; justify-content: space-between; gap:5px;">
+                                                                            <img src="assets/images/download-folder.gif"
+                                                                                alt="img"
+                                                                                style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="employee-performance-wrapper appointment-table">
+                                                                    <table id="table"
+                                                                        class="employee-performance-table table table-bordered table-centered mb-0">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Date</th>
+                                                                                <th>Employee Name</th>
+                                                                                <th>Process</th>
+                                                                                <th>Total Agent Calls</th>
+                                                                                <th>Login Target</th>
+                                                                                <th>Login Hours</th>
+                                                                                <th>Deficit</th>
+                                                                                <th>Not Ready %</th>
+                                                                                <th>Utilization %</th>
+                                                                                <th>Occupancy %</th>
+                                                                                <th>AHT</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="advisor">
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Bhagyashree Krishna Yel</td>
+                                                                                <td>Tiger Team – Helpline</td>
+                                                                                <td>517</td>
+                                                                                <td>72.00</td>
+                                                                                <td>69.24</td>
+                                                                                <td class="deficit-alert">
+                                                                                    2:35:34</td>
+                                                                                <td>12%</td>
+                                                                                <td>88%</td>
+                                                                                <td>78%</td>
+                                                                                <td>0:06:55</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Sajida Ansari</td>
+                                                                                <td>Tiger Team – Helpline</td>
+                                                                                <td>598</td>
+                                                                                <td>72.00</td>
+                                                                                <td>68.03</td>
+                                                                                <td class="deficit-alert">
+                                                                                    3:56:01</td>
+                                                                                <td>10%</td>
+                                                                                <td>90%</td>
+                                                                                <td>81%</td>
+                                                                                <td>0:07:10</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Chhaya Digambar Narkar</td>
+                                                                                <td>Tiger Team – Helpline</td>
+                                                                                <td>603</td>
+                                                                                <td>81.00</td>
+                                                                                <td>80.55</td>
+                                                                                <td>0:04:36</td>
+                                                                                <td>10%</td>
+                                                                                <td>90%</td>
+                                                                                <td>83%</td>
+                                                                                <td>0:06:30</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Zeeshan Salim Glasswala</td>
+                                                                                <td>Tiger Team – Smart Car</td>
+                                                                                <td>187</td>
+                                                                                <td>72.00</td>
+                                                                                <td>72.11</td>
+                                                                                <td>0:00:00</td>
+                                                                                <td>10%</td>
+                                                                                <td>90%</td>
+                                                                                <td>66%</td>
+                                                                                <td>0:07:45</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Santosh Nirmal</td>
+                                                                                <td>Tiger Team – Warranty</td>
+                                                                                <td>43</td>
+                                                                                <td>72.00</td>
+                                                                                <td>74.20</td>
+                                                                                <td>0:00:00</td>
+                                                                                <td>5%</td>
+                                                                                <td>82%</td>
+                                                                                <td>89%</td>
+                                                                                <td>0:06:05</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Akshaya Dixit</td>
+                                                                                <td>Tiger Team – Warranty</td>
+                                                                                <td>335</td>
+                                                                                <td>81.00</td>
+                                                                                <td>82.49</td>
+                                                                                <td>0:00:00</td>
+                                                                                <td>8%</td>
+                                                                                <td>92%</td>
+                                                                                <td>39%</td>
+                                                                                <td>0:07:20</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Harshita Ghind</td>
+                                                                                <td>Tiger Team – Warranty</td>
+                                                                                <td>54</td>
+                                                                                <td>54.00</td>
+                                                                                <td>50.54</td>
+                                                                                <td class="deficit-alert">
+                                                                                    3:05:56</td>
+                                                                                <td>9%</td>
+                                                                                <td>91%</td>
+                                                                                <td>26%</td>
+                                                                                <td>0:06:50</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Ashwini Ashok Kamble</td>
+                                                                                <td>Tiger Team – Webchat</td>
+                                                                                <td>780</td>
+                                                                                <td>72.00</td>
+                                                                                <td>65.52</td>
+                                                                                <td class="deficit-alert">
+                                                                                    6:07:46</td>
+                                                                                <td>11%</td>
+                                                                                <td>89%</td>
+                                                                                <td>62%</td>
+                                                                                <td>0:07:35</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>2025-06-28</td>
+                                                                                <td>Neeta Pawar</td>
+                                                                                <td>Tiger Team – Webchat</td>
+                                                                                <td>306</td>
+                                                                                <td>81.00</td>
+                                                                                <td>82.26</td>
+                                                                                <td>0:00:00</td>
+                                                                                <td>10%</td>
+                                                                                <td>90%</td>
+                                                                                <td>69%</td>
+                                                                                <td>0:06:25</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                        <tfoot>
+                                                                            <tr>
+                                                                                <td colspan="3"
+                                                                                    style="text-align: center;">
+                                                                                    <strong>Total</strong>
+                                                                                </td>
+                                                                                <td>2337</td>
+                                                                                <td>657.00</td>
+                                                                                <td>646.57</td>
+                                                                                <td>15:49:53</td>
+                                                                                <td>10%</td>
+                                                                                <td>30%</td>
+                                                                                <td>62%</td>
+                                                                                <td>0:06:55</td>
+                                                                            </tr>
+                                                                        </tfoot>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                            <!-- end card-body -->
+                                                        </div>
+                                                        <!-- end card-->
+                                                    </div>
+                                                    <!-- end col -->
+                                                </div>
+                                                <!-- end preview code-->
+                                            </div>
+                                            <!-- end tab-content-->
+                                        </details>
+                                </div>
+
+                                <div class="col-12">
+                                    <details>
+                                        <summary>
+                                            <h4 class="header-title">
+                                                <img src="assets/images/user-product.gif" alt="img"
+                                                    style="height:45px;">
+                                                Advisor Productivity
+                                            </h4>
+                                        </summary>
+                                        <hr>
+                                        <ul class="nav nav-tabs nav-bordered mb-3">
+                                            <li class="nav-item">
+                                                <a href="#userprodata" data-bs-toggle="tab" aria-expanded="false"
+                                                    class="nav-link active">
+                                                    View
+                                                    By Chart
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="#userprochart" data-bs-toggle="tab" aria-expanded="true"
+                                                    class="nav-link">
+                                                    View By Data
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <!-- end nav-->
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="userprodata">
+                                                <div style="margin-bottom: 20px; background-color: none;">
+                                                    <select id="updata" class="int-productdata">
+                                                        <option value="all" selected>Show All</option>
+                                                        <option value="Transfer To Warranty Helpline">Transfer
+                                                            To Warranty
+                                                            Helpline
+                                                        </option>
+                                                        <option value="Transfer To Helpline AOD">Transfer To
+                                                            Helpline AOD
+                                                        </option>
+                                                        <option value="Transfer To Webchat AOD">Transfer To
+                                                            Webchat AOD</option>
+                                                        <option value="Transfer To Helpline">Transfer To
+                                                            Helpline</option>
+                                                        <option value="Transfer To Smartcare">Transfer To
+                                                            Smartcare</option>
+                                                        <option value="Call Back">Call
+                                                            Back</option>
+                                                        <option value="Call Complete">Call
+                                                            Complete</option>
+                                                        <option value="Call disconnected by customer">Call
+                                                            disconnected by
+                                                            customer</option>
+                                                        <option value="Complaint status">Complaint
+                                                            status</option>
+                                                        <option value="NCT">NCT</option>
+                                                        <option value="Partial Success">Partial
+                                                            Success</option>
+                                                        <option value="Service Complaint Status">Service
+                                                            Complaint Status</option>
+                                                        <option value="Service Lead status">Service
+                                                            Lead status</option>
+                                                        <option value="Warranty related">Warranty
+                                                            related</option>
+                                                    </select>
+                                                    <select id="allemp" class="int-productdata">
+                                                        <option value="total">
+                                                            Total
+                                                            (All
+                                                            Employees)
+                                                        </option>
+                                                        <option value="oneemp">
+                                                            Individual
+                                                            Employee
+                                                        </option>
+                                                    </select>
+                                                    <select id="upemp" style="display: none;" class="int-productdata">
+                                                        <option value="Gaurav">Gaurav</option>
+                                                        <option value="Singh">Singh</option>
+                                                        <option value="Aswal">Aswal</option>
+                                                    </select>
+                                                    <label style="margin-left: 10px;">
+                                                        <strong>From</strong>
+                                                    </label>
+                                                    <input type="date" id="mainStartDate" class="int-productdata">
+                                                    <label style="margin-left: 10px;">
+                                                        <strong>To</strong>
+                                                    </label>
+                                                    <input type="date" id="upapply" class="int-productdata">
+                                                    <button type="button"
+                                                        class="int-productdata btn btn-primary mb-2 float-end"
+                                                        title="Apply filters">
+                                                        <img src="assets/images/double-check.gif" alt="img"
+                                                            style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                    </button>
+                                                    <canvas id="employeeTransferChart"
+                                                        style="margin-top: 30px; width: 100% !important; height: auto;"></canvas>
+                                                </div>
+                                            </div>
+                                            <!-- end preview-->
+                                            <div class="tab-pane" id="userprochart">
+                                                <!-- Filters (same as you requested) -->
+                                                <!-- Filters -->
+                                                <div class="col-12">
+                                                    <div class="card widget-flat"
+                                                        style="max-height:500px; height:fit-content;">
+                                                        <div class="card-body">
+                                                            <div
+                                                                class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+                                                                <div class="app-search dropdown">
+                                                                    <form>
+                                                                        <div>
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="Search..." id="bb"
+                                                                                style=" border-radius: 5px; background-color: #eeeeee;">
+                                                                            <span class="search-icon">
+                                                                                <img src="assets/images/searchicon.png"
+                                                                                    alt="img" style="height:20px;">
+                                                                            </span>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <div>
+                                                                    <select id="upfilter" class="int-productdata">
+                                                                        <option value="all" selected>Show All
+                                                                        </option>
+                                                                        <option value="Transfer To Warranty Helpline">
+                                                                            Transfer To Warranty
+                                                                            Helpline
+                                                                        </option>
+                                                                        <option value="Transfer To Helpline AOD">
+                                                                            Transfer To Helpline AOD
+                                                                        </option>
+                                                                        <option value="Transfer To Webchat AOD">
+                                                                            Transfer To Webchat AOD</option>
+                                                                        <option value="Transfer To Helpline">
+                                                                            Transfer To Helpline</option>
+                                                                        <option value="Transfer To Smartcare">
+                                                                            Transfer To Smartcare</option>
+                                                                        <option value="Call Back">Call
+                                                                            Back</option>
+                                                                        <option value="Call Complete">Call
+                                                                            Complete</option>
+                                                                        <option value="Call disconnected by customer">
+                                                                            Call
+                                                                            disconnected by
+                                                                            customer</option>
+                                                                        <option value="Complaint status">
+                                                                            Complaint
+                                                                            status</option>
+                                                                        <option value="NCT">NCT</option>
+                                                                        <option value="Partial Success">Partial
+                                                                            Success</option>
+                                                                        <option value="Service Complaint Status">
+                                                                            Service
+                                                                            Complaint Status</option>
+                                                                        <option value="Service Lead status">
+                                                                            Service
+                                                                            Lead status</option>
+                                                                        <option value="Warranty related">
+                                                                            Warranty
+                                                                            related</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div title="Select data range for your data"
+                                                                    class="app-search dropdown">
+                                                                    <input name="range" type="text"
+                                                                        class="form-control date"
+                                                                        data-toggle="date-picker" data-picker="true"
+                                                                        data-locale="{'format': 'DD/MM hh:mm A'}"
+                                                                        style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;"
+                                                                        value>
+                                                                    <span class="search-icon">
+                                                                        <img src="assets/images/daterange.gif" alt="img"
+                                                                            style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <button type="button"
+                                                                        class="int-productdata btn btn-primary mb-2"
+                                                                        title="Apply filters"
+                                                                        style="display: flex; justify-content: space-between; gap:5px;">
+                                                                        <img src="assets/images/double-check.gif"
+                                                                            alt="img"
+                                                                            style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                    </button>
+                                                                </div>
+                                                                <div class="float-end">
+                                                                    <button type="button"
+                                                                        class="int-productdata btn btn-danger mb-2 me-2"
+                                                                        title="Download data"
+                                                                        style="display: flex; justify-content: space-between; gap:5px;">
+                                                                        <img src="assets/images/download-folder.gif"
+                                                                            alt="img"
+                                                                            style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="advisor-table-container appointment-table"
+                                                                id="tailwind-table">
+                                                                <table
+                                                                    class="advisor-table table table-bordered table-centered mb-0"
+                                                                    id="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="sticky left-0 top-0 z-20"">
+																						Advisor Name</th>
+																					<th>Total Assign</th>
+																					<th>Completed</th>
+																					<th>Pending</th>
+																					<th>Transfer To Warranty Helpline
+																					</th>
+																					<th>Transfer To Helpline AOD</th>
+																					<th>Transfer To Webchat AOD</th>
+																					<th>Transfer To Helpline</th>
+																					<th>Transfer To Smartcare</th>
+																					<th>Call Back</th>
+																					<th>Call Complete</th>
+																					<th>Call disconnected by customer
+																					</th>
+																					<th>Complaint status</th>
+																					<th>NCT</th>
+																					<th>Partial Success</th>
+																					<th>Service Complaint Status</th>
+																					<th>Service Lead status</th>
+																					<th>Warranty related</th>
+																					<th class=" sticky right-0 top-0 z-20">
+                                                                                Total Average Time</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="bbb">
+                                                                        <tr>
+                                                                            <th class="sticky left-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                Gaurav</th>
+                                                                            <td>200</td>
+                                                                            <td>150</td>
+                                                                            <td>50</td>
+                                                                            <td>10 (14 Minutes)</td>
+                                                                            <td>12 (13 Minutes)</td>
+                                                                            <td>9 (12 Minutes)</td>
+                                                                            <td>11 (13 Minutes)</td>
+                                                                            <td>8 (11 Minutes)</td>
+                                                                            <td>10 (12 Minutes)</td>
+                                                                            <td>15 (11 Minutes)</td>
+                                                                            <td>10 (10 Minutes)</td>
+                                                                            <td>12 (14 Minutes)</td>
+                                                                            <td>8 (12 Minutes)</td>
+                                                                            <td>9 (11 Minutes)</td>
+                                                                            <td>6 (13 Minutes)</td>
+                                                                            <td>10 (14 Minutes)</td>
+                                                                            <td>10 (13 Minutes)</td>
+                                                                            <td class="sticky right-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                <b>12.4 Minutes</b>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th class="sticky left-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                Singh</th>
+                                                                            <td>180</td>
+                                                                            <td>140</td>
+                                                                            <td>40</td>
+                                                                            <td>11 (12 Minutes)</td>
+                                                                            <td>10 (11 Minutes)</td>
+                                                                            <td>10 (13 Minutes)</td>
+                                                                            <td>10 (14 Minutes)</td>
+                                                                            <td>9 (12 Minutes)</td>
+                                                                            <td>9 (10 Minutes)</td>
+                                                                            <td>14 (10 Minutes)</td>
+                                                                            <td>9 (11 Minutes)</td>
+                                                                            <td>10 (14 Minutes)</td>
+                                                                            <td>8 (12 Minutes)</td>
+                                                                            <td>8 (13 Minutes)</td>
+                                                                            <td>7 (11 Minutes)</td>
+                                                                            <td>7 (12 Minutes)</td>
+                                                                            <td>8 (13 Minutes)</td>
+                                                                            <td class="sticky right-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                <b>11.9 Minutes</b>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th class="sticky left-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                Aswal</th>
+                                                                            <td>170</td>
+                                                                            <td>130</td>
+                                                                            <td>40</td>
+                                                                            <td>9 (11 Minutes)</td>
+                                                                            <td>10 (12 Minutes)</td>
+                                                                            <td>8 (11 Minutes)</td>
+                                                                            <td>9 (10 Minutes)</td>
+                                                                            <td>7 (12 Minutes)</td>
+                                                                            <td>10 (11 Minutes)</td>
+                                                                            <td>13 (12 Minutes)</td>
+                                                                            <td>9 (10 Minutes)</td>
+                                                                            <td>10 (13 Minutes)</td>
+                                                                            <td>7 (12 Minutes)</td>
+                                                                            <td>8 (11 Minutes)</td>
+                                                                            <td>6 (13 Minutes)</td>
+                                                                            <td>7 (14 Minutes)</td>
+                                                                            <td>7 (12 Minutes)</td>
+                                                                            <td class="sticky right-0 z-10"
+                                                                                style="background-color: #1a1a1a; color:#fff;">
+                                                                                <b>11.6 Minutes</b>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                        <tr>
+                                                                            <th class="sticky left-0 z-10"
+                                                                                style="text-align-last: center;">
+                                                                                Total</th>
+                                                                            <th>550</th>
+                                                                            <th>420</th>
+                                                                            <th>130</th>
+                                                                            <th>30 (12 Minutes)</th>
+                                                                            <th>32 (12 Minutes)</th>
+                                                                            <th>27 (12 Minutes)</th>
+                                                                            <th>30 (12 Minutes)</th>
+                                                                            <th>24 (11 Minutes)</th>
+                                                                            <th>29 (11 Minutes)</th>
+                                                                            <th>42 (11 Minutes)</th>
+                                                                            <th>28 (10 Minutes)</th>
+                                                                            <th>32 (13 Minutes)</th>
+                                                                            <th>23 (12 Minutes)</th>
+                                                                            <th>25 (11 Minutes)</th>
+                                                                            <th>19 (12 Minutes)</th>
+                                                                            <th>24 (13 Minutes)</th>
+                                                                            <th>25 (12 Minutes)</th>
+                                                                            <th class=" sticky right-0 z-10" <b>
+                                                                                </b>
+                                                                                11.97
+                                                                                Minutes</b>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <!-- end card-body -->
+                                                    </div>
+                                                    <!-- end card-->
+                                                </div>
+                                            </div>
+                                            <!-- end preview code-->
+                                        </div>
+                                        <!-- end tab-content-->
+                                    </details>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer" style="background-color:#fff;"></footer>
+        <script src="assets/js/vendor.min.js"></script>
+        <script src="assets/js/app.min.js"></script>
+        <script src="assets/js/table search int base.js"></script>
+        <script src="assets/js/row bg.js"></script>
+        <script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+        <script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+        <script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+        <script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+        <script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+        <script src="assets/js/vendor/Chart.bundle.min.js"></script>
+        <script src="assets/js/summary.js"></script>
+        <!-- third party js ends -->
+        <!-- demo app -->
+        <script src="assets/js/pages/demo.dashboard-projects.js"></script>
+        <!-- JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+        <script>
+            const allLabels = [
+                "Call Back",
+                "Call Complete",
+                "Call disconnected by customer",
+                "Complaint status",
+                "NCT",
+                "Partial Success",
+                "Service Complaint Status",
+                "Service Lead status",
+                "Warranty related",
+                "Transfer To Warranty Helpline",
+                "Transfer To Helpline AOD",
+                "Transfer To Webchat AOD",
+                "Transfer To Helpline",
+                "Transfer To Smartcare"
+            ];
+
+            const allData = [
+                { label: "Call Back", advisor: "Advisor B", date: "2025-07-24", pending: 3, completed: 6 },
+                { label: "Call Complete", advisor: "Advisor C", date: "2025-07-24", pending: 1, completed: 8 },
+                { label: "Call disconnected by customer", advisor: "Advisor A", date: "2025-07-24", pending: 2, completed: 5 },
+                { label: "Complaint status", advisor: "Advisor A", date: "2025-07-24", pending: 5, completed: 8 },
+                { label: "NCT", advisor: "Advisor A", date: "2025-07-24", pending: 2, completed: 4 },
+                { label: "Partial Success", advisor: "Advisor B", date: "2025-07-24", pending: 3, completed: 7 },
+                { label: "Service Complaint Status", advisor: "Advisor C", date: "2025-07-24", pending: 4, completed: 9 },
+                { label: "Service Lead status", advisor: "Advisor A", date: "2025-07-24", pending: 1, completed: 6 },
+                { label: "Warranty related", advisor: "Advisor B", date: "2025-07-24", pending: 2, completed: 8 },
+                { label: "Transfer To Warranty Helpline", advisor: "Advisor A", date: "2025-07-24", pending: 5, completed: 12 },
+                { label: "Transfer To Helpline AOD", advisor: "Advisor B", date: "2025-07-24", pending: 4, completed: 10 },
+                { label: "Transfer To Webchat AOD", advisor: "Advisor C", date: "2025-07-24", pending: 3, completed: 9 },
+                { label: "Transfer To Helpline", advisor: "Advisor A", date: "2025-07-24", pending: 2, completed: 7 },
+                { label: "Transfer To Smartcare", advisor: "Advisor B", date: "2025-07-24", pending: 6, completed: 11 }
+            ];
+
+            // Prepare data arrays
+            const pendingData = [];
+            const completedData = [];
+
+            allLabels.forEach(label => {
+                const item = allData.find(d => d.label === label);
+                if (item) {
+                    pendingData.push(item.pending);
+                    completedData.push(item.completed);
+                } else {
+                    pendingData.push(0);
+                    completedData.push(0);
+                }
+            });
+
+            const ctx = document.getElementById('dispositionBarChart').getContext('2d');
+
+            const dispositionChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: allLabels,
+                    datasets: [
+                        {
+                            label: 'Pending',
+                            data: pendingData,
+                            backgroundColor: 'rgba(111, 123, 247, 1)',
+                            stack: 'combined',
+                            barThickness: 15
+                        },
+                        {
+                            label: 'Completed',
+                            data: completedData,
+                            backgroundColor: 'rgba(255, 93, 126, 1)',
+                            stack: 'combined',
+                            barThickness: 15,
+                            borderRadius: {
+                                topLeft: 5,
+                                topRight: 5
+                            }
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 20,
+                            right: 20
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        datalabels: {
+                            display: true,
+                            color: '#000',
+                            anchor: 'end',
+                            align: 'start',
+                            formatter: function (value, context) {
+                                const index = context.dataIndex;
+                                if (context.datasetIndex === 1) {
+                                    const total = pendingData[index] + completedData[index];
+                                    return `${total}`;
+                                }
+                                return '';
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+
+
+            function updateChart() {
+                const selectedDisposition = document.getElementById("pcdata").value;
+                const selectedAdvisor = document.getElementById("pcadvisorFilter").value;
+                const startDate = document.getElementById("pcStartDate").value;
+                const endDate = document.getElementById("pcEndDate").value;
+
+                // Filter based on selected options
+                const filtered = allData.filter(item => {
+                    const dispositionMatch = selectedDisposition === "all" || item.label === selectedDisposition;
+                    const advisorMatch = selectedAdvisor === "all" || item.advisor === selectedAdvisor;
+                    const dateMatch = (!startDate || item.date >= startDate) && (!endDate || item.date <= endDate);
+                    return dispositionMatch && advisorMatch && dateMatch;
+                });
+
+                // Initialize empty values
+                const pendingData = {};
+                const completedData = {};
+                allLabels.forEach(label => {
+                    pendingData[label] = 0;
+                    completedData[label] = 0;
+                });
+
+                // Sum up filtered data
+                filtered.forEach(item => {
+                    pendingData[item.label] += item.pending;
+                    completedData[item.label] += item.completed;
+                });
+
+                // Update chart data
+                dispositionChart.data.datasets[0].data = allLabels.map(label => pendingData[label]);
+                dispositionChart.data.datasets[1].data = allLabels.map(label => completedData[label]);
+                dispositionChart.update();
+            }
+
+            // Default run on page load — today's date
+            window.addEventListener("DOMContentLoaded", () => {
+                const today = new Date().toISOString().split("T")[0];
+                document.getElementById("pcStartDate").value = today;
+                document.getElementById("pcEndDate").value = today;
+                updateChart();
+            });
+
+            // On Apply click
+            document.getElementById("pcapply").addEventListener("click", updateChart);
+
+            document.getElementById("pcDownloadBtn").addEventListener("click", function () {
+                const selectedDisposition = document.getElementById("pcdata").value;
+                const selectedAdvisor = document.getElementById("pcadvisorFilter").value;
+                const startDate = document.getElementById("pcStartDate").value;
+                const endDate = document.getElementById("pcEndDate").value;
+
+                const filteredData = allData.filter(item => {
+                    const matchDisposition = selectedDisposition === "Select Here" || item.label === selectedDisposition;
+                    const matchAdvisor = selectedAdvisor === "all" || item.advisor === selectedAdvisor;
+                    const matchDate = (!startDate || item.date >= startDate) && (!endDate || item.date <= endDate);
+                    return matchDisposition && matchAdvisor && matchDate;
+                });
+
+                if (filteredData.length === 0) {
+                    alert("No data available for selected filters.");
+                    return;
+                }
+
+                // Group and summarize data
+                const summary = {};
+                filteredData.forEach(item => {
+                    if (!summary[item.label]) {
+                        summary[item.label] = { pending: 0, completed: 0 };
+                    }
+                    summary[item.label].pending += item.pending;
+                    summary[item.label].completed += item.completed;
+                });
+
+                const exportData = Object.entries(summary).map(([label, values]) => ({
+                    "Disposition": label,
+                    "Pending": values.pending,
+                    "Completed": values.completed,
+                    "Total": values.pending + values.completed
+                }));
+
+                // Convert to worksheet & Excel file
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Disposition Data");
+
+                XLSX.writeFile(workbook, "disposition_data.xlsx");
+            });
+
+
+            // Default chart on load
+            window.addEventListener("DOMContentLoaded", () => {
+                updateChart();
+            });
+        </script>
+
+        <!-- tat chart -->
+        <script>
+            // ✅ Unique Plugin to show total counts
+            const showTATATotalPlugin = {
+                id: 'showTATATotalPlugin',
+                afterDatasetsDraw(chart) {
+                    const { ctx, data } = chart;
+                    const [meta1, meta2] = [chart.getDatasetMeta(0), chart.getDatasetMeta(1)];
+
+                    ctx.save();
+                    data.labels.forEach((label, i) => {
+                        const bar1 = meta1.data[i];
+                        const bar2 = meta2.data[i];
+
+                        if (bar1 && bar2) {
+                            const total = data.datasets[0].data[i] + data.datasets[1].data[i];
+                            const x = bar1.x;
+                            const y = Math.min(bar1.y, bar2.y) - 10;
+
+                            ctx.font = "bold 12px sans-serif";
+                            ctx.fillStyle = "#000";
+                            ctx.textAlign = "center";
+                            ctx.fillText(total, x, y);
+                        }
+                    });
+                    ctx.restore();
+                }
+            };
+
+            // ✅ Chart Initialization
+            const tatCtx = document.getElementById("tatComplianceBarChart").getContext("2d");
+
+            const tatComplianceBarChart = new Chart(tatCtx, {
+                type: "bar",
+                data: {
+                    labels: [
+                        "Call Back",
+                        "Call Complete",
+                        "Call disconnected by customer",
+                        "Complaint status",
+                        "NCT",
+                        "Partial Success",
+                        "Service Complaint Status",
+                        "Service Lead status",
+                        "Warranty related",
+                        "Transfer To Warranty Helpline",
+                        "Transfer To Helpline AOD",
+                        "Transfer To Webchat AOD",
+                        "Transfer To Helpline",
+                        "Transfer To Smartcare"
+                    ],
+                    datasets: [
+                        {
+                            label: "Compliance",
+                            data: [12, 19, 3, 5, 8, 10, 6, 4, 7, 11, 5, 6, 9, 13],
+                            backgroundColor: 'rgba(111, 123, 247, 1)',
+                            barThickness: 15,
+                            borderSkipped: false
+                        },
+                        {
+                            label: "Non Compliance",
+                            data: [5, 3, 10, 2, 4, 1, 3, 6, 2, 7, 6, 3, 5, 2],
+                            backgroundColor: 'rgba(255, 93, 126, 1)',
+                            barThickness: 15,
+                            borderRadius: {
+                                topLeft: 5,
+                                topRight: 5
+                            },
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 20,
+                            right: 20
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                },
+                plugins: [showTATATotalPlugin]
+            });
+
+            // 3. Filter Application (Trigger reload based on filter values)
+            document.getElementById("tatapply").addEventListener("click", function () {
+                const selectedPage = document.getElementById("tatPageFilter").value;
+                const selectedAdvisor = document.getElementById("tatadvisorFilter").value;
+                const startDate = document.getElementById("tatStartDate").value;
+                const endDate = document.getElementById("tatEndDate").value;
+
+                // Call a function to filter and update chart data
+                updateTatComplianceChart(selectedPage, selectedAdvisor, startDate, endDate);
+            });
+
+            function updateTatComplianceChart(page, advisor, startDate, endDate) {
+                // Dummy data - replace with actual filtered logic from backend or JS logic
+                const newLabels = ["Call Back", "Call Complete"];
+                const complianceData = [10, 7];
+                const nonComplianceData = [3, 4];
+
+                tatComplianceBarChart.data.labels = newLabels;
+                tatComplianceBarChart.data.datasets[0].data = complianceData;
+                tatComplianceBarChart.data.datasets[1].data = nonComplianceData;
+                tatComplianceBarChart.update();
+            }
+        </script>
+        <!-- aspect chart -->
+
+        <script>
+            let tatadataChart;
+
+            const tatadataRawData = {
+                "Bhagyashree Krishna Yel": { "Total Agent Calls": 517, "Login Target": 72, "Login Hours": 69.24, "Deficit": 9334, "Not Ready %": 12, "Utilization %": 88, "Occupancy %": 78, "AHT": 415 },
+                "Sajida Ansari": { "Total Agent Calls": 598, "Login Target": 72, "Login Hours": 68.03, "Deficit": 14161, "Not Ready %": 10, "Utilization %": 90, "Occupancy %": 81, "AHT": 430 },
+                "Chhaya Digambar Narkar": { "Total Agent Calls": 603, "Login Target": 81, "Login Hours": 80.55, "Deficit": 276, "Not Ready %": 10, "Utilization %": 90, "Occupancy %": 83, "AHT": 390 },
+                "Zeeshan Salim Glasswala": { "Total Agent Calls": 187, "Login Target": 72, "Login Hours": 72.11, "Deficit": 0, "Not Ready %": 10, "Utilization %": 90, "Occupancy %": 66, "AHT": 465 },
+                "Santosh Nirmal": { "Total Agent Calls": 43, "Login Target": 72, "Login Hours": 74.2, "Deficit": 0, "Not Ready %": 5, "Utilization %": 82, "Occupancy %": 89, "AHT": 365 },
+                "Akshaya Dixit": { "Total Agent Calls": 335, "Login Target": 81, "Login Hours": 82.49, "Deficit": 0, "Not Ready %": 8, "Utilization %": 92, "Occupancy %": 39, "AHT": 440 },
+                "Harshita Ghind": { "Total Agent Calls": 54, "Login Target": 54, "Login Hours": 50.54, "Deficit": 11156, "Not Ready %": 9, "Utilization %": 91, "Occupancy %": 26, "AHT": 410 }
+            };
+
+            function convertSecondsToHMS(sec) {
+                const h = Math.floor(sec / 3600).toString().padStart(2, '0');
+                const m = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
+                const s = Math.floor(sec % 60).toString().padStart(2, '0');
+                return `${h}:${m}:${s}`;
+            }
+
+            function convertSecToMinSec(sec) {
+                const m = Math.floor(sec / 60).toString().padStart(2, '0');
+                const s = Math.floor(sec % 60).toString().padStart(2, '0');
+                return `${m}:${s}`;
+            }
+
+            function getTotalData(data) {
+                const total = {
+                    "Total Agent Calls": 0,
+                    "Login Target": 0,
+                    "Login Hours": 0,
+                    "Deficit": 0,
+                    "Not Ready %": 0,
+                    "Utilization %": 0,
+                    "Occupancy %": 0,
+                    "AHT": 0
+                };
+                const keys = Object.keys(data);
+                keys.forEach(emp => {
+                    const empData = data[emp];
+                    Object.keys(total).forEach(key => {
+                        total[key] += empData[key];
+                    });
+                });
+                // For average-type fields
+                total["Not Ready %"] = (total["Not Ready %"] / keys.length).toFixed(1);
+                total["Utilization %"] = (total["Utilization %"] / keys.length).toFixed(1);
+                total["Occupancy %"] = (total["Occupancy %"] / keys.length).toFixed(1);
+                total["AHT"] = (total["AHT"] / keys.length).toFixed(0);
+                return total;
+            }
+
+            function renderTatadataChart(data) {
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+                const backgroundColors = [
+                    '#FF6384', '#36A2EB', '#FFCE56',
+                    '#4BC0C0', '#9966FF', '#FF9F40',
+                    '#00B894', '#D63031'
+                ];
+                const displayLabels = labels.map((label, i) => {
+                    if (label === 'Deficit') return convertSecondsToHMS(values[i]);
+                    if (label === 'AHT') return convertSecToMinSec(values[i]);
+                    return values[i].toString();
+                });
+
+                if (tatadataChart) tatadataChart.destroy();
+
+                const ctx = document.getElementById("tatadataChartCanvas").getContext("2d");
+                tatadataChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Tatadata Metrics",
+                            data: values,
+                            backgroundColor: backgroundColors,
+                            barThickness: 15,
+                            borderRadius: {
+                                topLeft: 5,
+                                topRight: 5
+                            },
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = labels[context.dataIndex];
+                                        const val = values[context.dataIndex];
+                                        if (label === "Deficit") return `Deficit: ${convertSecondsToHMS(val)}`;
+                                        if (label === "AHT") return `AHT: ${convertSecToMinSec(val)}`;
+                                        return `${label}: ${val}`;
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                color: '#000',
+                                anchor: 'end',
+                                align: 'top',
+                                formatter: function (value, ctx) {
+                                    const label = labels[ctx.dataIndex];
+                                    if (label === "Deficit") return convertSecondsToHMS(value);
+                                    if (label === "AHT") return convertSecToMinSec(value);
+                                    return value;
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            }
+
+            document.getElementById("acpectapply").addEventListener("click", function () {
+                const viewType = document.getElementById("acpectemp").value;
+                const selectedEmp = document.getElementById("employeeFilterChart").value;
+
+                let finalData;
+                if (viewType === "employee") {
+                    finalData = tatadataRawData[selectedEmp];
+                } else {
+                    finalData = getTotalData(tatadataRawData);
+                }
+
+                renderTatadataChart(finalData);
+            });
+
+            document.getElementById("acpectemp").addEventListener("change", function () {
+                const type = this.value;
+                const empDropdown = document.getElementById("employeeFilterChart");
+                empDropdown.style.display = type === "employee" ? "inline-block" : "none";
+            });
+
+            window.addEventListener("load", () => {
+                const defaultData = getTotalData(tatadataRawData);
+                renderTatadataChart(defaultData);
+            });
+        </script>
+        <!-- user productivity Chart -->
+        <script>
+            const chartLabels = [
+                "Call Back",
+                "Call Complete",
+                "Call disconnected by customer",
+                "Complaint status",
+                "NCT",
+                "Partial Success",
+                "Service Complaint Status",
+                "Service Lead status",
+                "Warranty related",
+                "Transfer To Warranty Helpline",
+                "Transfer To Helpline AOD",
+                "Transfer To Webchat AOD",
+                "Transfer To Helpline",
+                "Transfer To Smartcare"
+            ];
+
+            const chartDataMap = {
+                Total: [
+                    "30 (12 Minutes)", "32 (12 Minutes)", "27 (12 Minutes)", "30 (12 Minutes)", "24 (11 Minutes)",
+                    "29 (11 Minutes)", "42 (11 Minutes)", "28 (10 Minutes)", "32 (13 Minutes)", "23 (12 Minutes)",
+                    "25 (11 Minutes)", "19 (12 Minutes)", "24 (13 Minutes)", "25 (12 Minutes)"
+                ],
+                Gaurav: [
+                    "10 (14 Minutes)", "12 (13 Minutes)", "9 (12 Minutes)", "11 (13 Minutes)", "8 (11 Minutes)",
+                    "10 (12 Minutes)", "15 (11 Minutes)", "10 (10 Minutes)", "12 (14 Minutes)", "8 (12 Minutes)",
+                    "9 (11 Minutes)", "6 (13 Minutes)", "10 (14 Minutes)", "10 (13 Minutes)"
+                ],
+                Singh: [
+                    "11 (12 Minutes)", "10 (11 Minutes)", "10 (13 Minutes)", "10 (14 Minutes)", "9 (12 Minutes)",
+                    "9 (10 Minutes)", "14 (10 Minutes)", "9 (11 Minutes)", "10 (14 Minutes)", "8 (12 Minutes)",
+                    "8 (13 Minutes)", "7 (11 Minutes)", "7 (12 Minutes)", "8 (13 Minutes)"
+                ],
+                Aswal: [
+                    "9 (11 Minutes)", "10 (12 Minutes)", "8 (11 Minutes)", "9 (10 Minutes)", "7 (12 Minutes)",
+                    "10 (11 Minutes)", "13 (12 Minutes)", "9 (10 Minutes)", "10 (13 Minutes)", "7 (12 Minutes)",
+                    "8 (11 Minutes)", "6 (13 Minutes)", "7 (14 Minutes)", "7 (12 Minutes)"
+                ]
+            };
+
+            const empTransferCtx = document.getElementById("employeeTransferChart").getContext("2d");
+            let empTransferChartInstance;
+
+            function updateChart(type = "total", emp = "Total", labelFilter = "all") {
+                let selectedData = chartDataMap[emp];
+                let selectedLabels = [...chartLabels];
+
+                if (labelFilter !== "all") {
+                    const index = selectedLabels.indexOf(labelFilter);
+                    selectedLabels = [selectedLabels[index]];
+                    selectedData = [selectedData[index]];
+                }
+
+                const numericData = selectedData.map(item => parseInt(item));
+
+                if (empTransferChartInstance) empTransferChartInstance.destroy();
+
+                empTransferChartInstance = new Chart(empTransferCtx, {
+                    type: "bar",
+                    data: {
+                        labels: selectedLabels,
+                        datasets: [{
+                            label: "Data (Count + Time)",
+                            data: numericData,
+                            backgroundColor: 'rgba(111, 123, 247, 1)',
+                            borderWidth: 1,
+                            barThickness: 15,
+                            borderRadius: {
+                                topLeft: 5,
+                                topRight: 5
+                            },
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return selectedData[context.dataIndex];
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'top',
+                                formatter: function (value, context) {
+                                    return value;
+                                },
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                updateChart();
+
+                document.querySelector("#updata").addEventListener("change", function () {
+                    const filter = this.value;
+                    const empType = document.querySelector("#allemp").value;
+                    const emp = empType === "oneemp" ? document.querySelector("#upemp").value : "Total";
+                    updateChart(empType, emp, filter);
+                });
+
+                document.querySelector("#allemp").addEventListener("change", function () {
+                    const value = this.value;
+                    document.querySelector("#upemp").style.display = value === "oneemp" ? "inline-block" : "none";
+                    const labelFilter = document.querySelector("#updata").value;
+                    const emp = value === "oneemp" ? document.querySelector("#upemp").value : "Total";
+                    updateChart(value, emp, labelFilter);
+                });
+
+                document.querySelector("#upemp").addEventListener("change", function () {
+                    const emp = this.value;
+                    const labelFilter = document.querySelector("#updata").value;
+                    updateChart("oneemp", emp, labelFilter);
+                });
+            });
+        </script>
+
+</body>
+
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+
+<head>
+    <title>Login | Tiger Team</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/images/tablogo.png" type="png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lato&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background-image: url('assets/images/bg_4.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+
+        .container {
+            position: relative;
+            max-width: 850px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+            /* Semi-transparent dark background */
+            backdrop-filter: blur(1px);
+            /* Glass blur effect */
+            -webkit-backdrop-filter: blur(4px);
+            /* Safari support */
+            border-radius: 20px;
+            /* Rounded corners */
+            box-shadow: 0 2px 4px 4px rgba(0, 0, 0, 0.2);
+            /* Depth */
+            overflow-x: auto;
+            padding: 20px;
+        }
+
+        .container .cover {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 50%;
+            z-index: 98;
+            transition: all 1s ease;
+            transform-origin: left;
+            transform-style: preserve-3d;
+        }
+
+        .container #flip:checked~.cover {
+            transform: rotateY(-180deg);
+            height: 100%;
+        }
+
+        .container .cover .front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .container .cover::before,
+        .container .cover::after {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: #81399796;
+            opacity: 0.5;
+            z-index: 12;
+        }
+
+        .container .cover::after {
+            opacity: 0.3;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+        }
+
+        .container .cover img {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            z-index: 10;
+        }
+
+        .container .cover .text {
+            position: absolute;
+            z-index: 130;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover .text .text-1,
+        .cover .text .text-2 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+        }
+
+        .cover .text .text-2 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .container .forms {
+            height: 100%;
+            width: 100%;
+            /* Depth */
+            overflow-x: auto;
+            background: transparent;
+        }
+
+        .container .form-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-content .login-form,
+        .form-content .signup-form {
+            width: calc(100% / 2 - 25px);
+        }
+
+        .forms .form-content .title {
+            position: relative;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: "Poppins", "Lato", serif;
+            /* Use Poppins as the primary font, fallback to Lato */
+            background: linear-gradient(90deg, #e91edf, #ecea71, #d476ff, #d8ba58, #ff952b, #ff0080);
+            background-clip: text;
+            background-size: 300%;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: gradient-loop 4s linear infinite;
+        }
+
+        @keyframes gradient-loop {
+            0% {
+                background-position: 0%;
+            }
+
+            100% {
+                background-position: 100%;
+            }
+        }
+
+
+
+
+        .forms .form-content .title:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            width: 25px;
+            background: #e8ff67;
+        }
+
+        .forms .signup-form .title:before {
+            width: 25px;
+        }
+
+        .forms .form-content .input-boxes {
+            margin-top: 30px;
+        }
+
+        .forms .form-content .input-box {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            width: 100%;
+            margin: 10px 0;
+            position: relative;
+            background-color: none;
+        }
+
+        .form-content .input-box input {
+            height: 100%;
+            width: 100%;
+            outline: none;
+            border: none;
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 2px solid rgb(255, 255, 255);
+            color: #fff;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .form-content .input-box input:focus,
+        .form-content .input-box input:valid {
+            border-color: #7d2ae8;
+        }
+
+        .form-content .input-box i {
+            position: absolute;
+            color: #ebebeb;
+            font-size: 17px;
+        }
+
+        input::placeholder {
+            color: #d1d1d1;
+            /* Change this to your desired color */
+        }
+
+        .forms .form-content .text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .forms .form-content .text a {
+            text-decoration: none;
+        }
+
+        .forms .form-content .text a:hover {
+            text-decoration: underline;
+        }
+
+        .forms .form-content .button {
+            color: #fff;
+            margin-top: 40px;
+        }
+
+        .forms .form-content .button input {
+            color: #fff;
+            background: #7d2ae8;
+            border-radius: 6px;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .forms .form-content .button input:hover {
+            background: #5b13b9;
+        }
+
+        .forms .form-content label {
+            color: #5b13b9;
+            cursor: pointer;
+        }
+
+        .forms .form-content label:hover {
+            text-decoration: underline;
+        }
+
+        .forms .form-content .login-text,
+        .forms .form-content .sign-up-text {
+            text-align: center;
+            margin-top: 25px;
+            color: #fff;
+        }
+
+        .forms .form-content .sign-up-text label {
+            color: #f7dd4b;
+            text-decoration: none;
+            /* Ensure transform applies correctly */
+        }
+
+        .container #flip {
+            display: none;
+        }
+
+        @media (max-width: 730px) {
+            .container .cover {
+                display: none;
+            }
+
+            .form-content .login-form,
+            .form-content .signup-form {
+                width: 100%;
+            }
+
+            .form-content .signup-form {
+                display: none;
+            }
+
+            .container #flip:checked~.forms .signup-form {
+                display: block;
+            }
+
+            .container #flip:checked~.forms .login-form {
+                display: none;
+            }
+        }
+
+        .color {
+            background: linear-gradient(90deg,
+                    #892ffd,
+                    #1a18b8,
+                    #32c1fa,
+                    #16f746,
+                    #f7dd4b,
+                    #fd9824,
+                    #ff1717);
+            font-family: Segoe Script;
+            font-weight: 600;
+            font-size: 30px;
+            text-transform: uppercase;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* admin or other user selection start */
+        .pane {
+            outline: 2px solid #ffffff;
+            height: 1cm;
+            width: 3cm;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.7s ease;
+        }
+
+        .input {
+            display: none;
+        }
+
+        .pane label span {
+            color: #fdfdfd;
+            text-decoration: none;
+        }
+
+        .label {
+            height: 1cm;
+            width: 1.5cm;
+            float: left;
+            font-weight: 600;
+            letter-spacing: -1px;
+            font-size: 14px;
+            padding: 0px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .selection {
+            display: none;
+            position: absolute;
+            height: 1cm;
+            width: calc(3cm / 2);
+            z-index: 0;
+            left: 0;
+            top: 0;
+            transition: 0.15s ease;
+        }
+
+        .label:has(input:checked) {
+            color: #ffffff;
+        }
+
+        .label:has(input:checked)~.selection {
+            background: #e9ec26;
+            background: linear-gradient(145deg, #0a86ac 0%, #0754ac 100%);
+            display: inline-block;
+            color: #fff;
+        }
+
+        .label:nth-child(1):has(input:checked)~.selection {
+            transform: translateX(calc(3cm * 0 / 2));
+        }
+
+        .label:nth-child(2):has(input:checked)~.selection {
+            transform: translateX(calc(3cm * 1 / 2));
+        }
+
+        /* admin or other user selection end */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #f44336;
+            /* Red */
+            color: white;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 9999;
+            /* Ensure it appears on top */
+            left: 50%;
+            top: 0;
+            /* Position at the top */
+            font-size: 17px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+            /* Optional: Adds shadow for better visibility */
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadeInOut 4s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+
+            25% {
+                opacity: 1;
+            }
+
+            75% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Page loader style */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            /* Start with 0 width */
+            height: 4px;
+            background-color: #ce5a2c;
+            /* Initial color */
+            z-index: 9999;
+            transition: width 0.1s linear;
+            /* Smooth transition */
+        }
+
+        .front video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Make the video cover the entire container */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader"></div>
+    <div class="container">
+        <input type="checkbox" id="flip">
+        <div class="cover">
+            <div class="front">
+                <video autoplay loop muted>
+                    <source src="assets/Video/sidenav2.mp4" type="video/mp4">
+                </video>
+                <div class="text">
+                    <span class="text-1"> Life is like a rainbow <br> You
+                        need both rain and
+                        sun to make its <font class="color" face="Showcard Gothic">
+                            colors</font> appear </span>
+                </div>
+            </div>
+        </div>
+        <div class="forms">
+            <div class="form-content">
+                <div class="login-form">
+                    <div class="title"><i class="fas fa-user-tie" style="margin-right:5px;"></i> Advisor
+                        LOGIN</div>
+                    <form action="Dashboard.html" method>
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-user"></i>
+                                <input type="text" placeholder="Enter your username" name="username" id="fullname"
+                                    required>
+                            </div>
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" placeholder="Enter your password" name="password"
+                                    id="id_password" required>
+                                <i class="far fa-eye" id="togglePassword"
+                                    style="margin-left:350px; cursor: pointer;"></i>
+                            </div>
+
+                            <div class="button input-box">
+                                <input type="submit" name="type" id="type" value="Login">
+                            </div>
+                            <div class="text sign-up-text">Not An Advisor ?
+                                <label for="flip"> Admin
+                                    Login</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="signup-form">
+                    <div class="title"><i class="fas fa-user-shield" style="margin-right:5px;"></i> ADMIN
+                        LOGIN <i class="fas fa-sign-in"></i></div>
+                    <form action="Dashboard.html" method>
+                        <div class="input-boxes">
+                            <div class="input-box">
+                                <i class="fas fa-user"></i>
+                                <input type="text" placeholder="Enter your username" name="username" id="fullname"
+                                    required>
+                            </div>
+
+                            <div class="input-box">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" placeholder="Enter your password" name="password"
+                                    id="id_password" required>
+                                <i class="far fa-eye" id="togglePassword"
+                                    style="margin-left:350px; cursor: pointer;"></i>
+                            </div>
+
+                            <br>
+
+                            <div class="pane">
+                                <label class="label">
+                                    <span>Admin</span>
+                                    <input id="left" class="input" name="type" checked="checked" type="radio"
+                                        value="Admin">
+                                </label>
+                                <label class="label">
+                                    <span>Others</span>
+                                    <input id="right" class="input" name="type" type="radio" value="Others">
+                                </label>
+                                <span class="selection"></span>
+                            </div>
+
+                            <div class="button input-box">
+                                <input type="submit" id="type" value="Login">
+
+                            </div>
+                            <div class="text sign-up-text">Not An Admin ?
+                                <label for="flip">Advisor
+                                    Login</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#id_password');
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.querySelector('.loader');
+        // Measure the page load time
+        const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+        // Calculate progress speed based on load time (larger load time, slower loader speed)
+        let duration = Math.max(3000, loadTime); // Ensure the duration is at least 1 second
+        // Set loader progress (dynamically change width based on load time)
+        loader.style.transitionDuration = `${duration}ms`; // Set the transition time dynamically
+        loader.style.width = '100%'; // Start the loader animation
+        // Hide the loader after it reaches 100% width
+        setTimeout(function () {
+            loader.style.display = 'none';
+        }, duration); // Hide loader after the animation completes
+    });
+</script>
+<script src="assets/js/login.js"></script>
+
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Productivity Chart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <link rel="shortcut icon" href="assets/images/tablogo.png" type="png">
+    <link href="assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <style>
+        .leftside-menu,
+        footer {
+            display: none !important;
+        }
+
+        /* Agar content area adjust karna ho: */
+        main,
+        .content-page,
+        .page-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: left;
+        }
+
+        .appointment-table {
+            max-height: 300px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        #tailwind-table .sticky {
+            position: sticky;
+        }
+
+        #tailwind-table .left-0 {
+            left: 0;
+        }
+
+        #tailwind-table .right-0 {
+            right: 0;
+        }
+
+        #tailwind-table .top-0 {
+            top: 0;
+        }
+
+        #tailwind-table .z-10 {
+            z-index: 10;
+        }
+
+        #tailwind-table .z-20 {
+            z-index: 20;
+        }
+
+        .advisor-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .advisor-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .advisor-table th,
+        .advisor-table td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+        }
+
+        .advisor-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .advisor-table tfoot th {
+            position: sticky;
+            bottom: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .advisor-table th.sticky.left-0,
+        .advisor-table td.sticky.left-0 {
+            position: sticky;
+            left: 0;
+            background-color: #aa69df;
+            z-index: 3;
+        }
+
+        .advisor-table td.sticky.right-0,
+        .advisor-table th.sticky.right-0 {
+            position: sticky;
+            right: 0;
+            background-color: #9966FF;
+            color: white;
+            z-index: 3;
+        }
+
+        #employeeTransferChart {
+            height: 350px !important;
+        }
+
+        /* summary css */
+        /* // Collapsible Closed */
+        details {
+            max-width: 1500px;
+            margin: 1rem auto;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 .50rem 1rem rgba(0, 0, 0, 0.1);
+
+            summary {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 0;
+                transition: margin-bottom .4s;
+                position: relative;
+            }
+
+            /* // Disable browser default marker */
+            summary::-webkit-details-marker,
+            summary::marker {
+                content: "";
+                display: none;
+            }
+
+            /* // Custom marker */
+            summary::after {
+                content: "";
+                font-size: 1.5rem;
+                line-height: 1;
+                margin-right: 1rem;
+                cursor: pointer;
+                padding: .75rem;
+                display: grid;
+                place-content: center;
+                aspect-ratio: 1;
+                line-height: 0;
+                position: absolute;
+                top: -.5rem;
+                right: -1.5rem;
+                border-radius: 50%;
+            }
+
+            *:not(summary) {
+                animation-name: fade;
+                animation-duration: .4s;
+            }
+        }
+
+        /* // Collapsible OPEN */
+        details[open] {
+
+            /* // Custom marker */
+            summary {
+                margin-bottom: 1.5rem;
+
+                &::after {
+                    content: "";
+                }
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="nav nav-tabs nav-bordered mb-3">
+        <li class="nav-item">
+            <a href="#userprodata" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
+                View
+                By Chart
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#userprochart" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
+                View By Data
+            </a>
+        </li>
+    </ul>
+    <!-- end nav-->
+    <div class="tab-content">
+        <div class="tab-pane show active" id="userprodata">
+            <div style="margin-bottom: 20px; background-color: none;">
+                <select id="updata" class="int-productdata">
+                    <option value="all" selected>Show All</option>
+                    <option value="Transfer To Warranty Helpline">Transfer
+                        To Warranty
+                        Helpline
+                    </option>
+                    <option value="Transfer To Helpline AOD">Transfer To
+                        Helpline AOD
+                    </option>
+                    <option value="Transfer To Webchat AOD">Transfer To
+                        Webchat AOD</option>
+                    <option value="Transfer To Helpline">Transfer To
+                        Helpline</option>
+                    <option value="Transfer To Smartcare">Transfer To
+                        Smartcare</option>
+                    <option value="Call Back">Call
+                        Back</option>
+                    <option value="Call Complete">Call
+                        Complete</option>
+                    <option value="Call disconnected by customer">Call
+                        disconnected by
+                        customer</option>
+                    <option value="Complaint status">Complaint
+                        status</option>
+                    <option value="NCT">NCT</option>
+                    <option value="Partial Success">Partial
+                        Success</option>
+                    <option value="Service Complaint Status">Service
+                        Complaint Status</option>
+                    <option value="Service Lead status">Service
+                        Lead status</option>
+                    <option value="Warranty related">Warranty
+                        related</option>
+                </select>
+                <select id="allemp" class="int-productdata">
+                    <option value="total">
+                        Total
+                        (All
+                        Employees)
+                    </option>
+                    <option value="oneemp">
+                        Individual
+                        Employee
+                    </option>
+                </select>
+                <select id="upemp" style="display: none;" class="int-productdata">
+                    <option value="Gaurav">Gaurav</option>
+                    <option value="Singh">Singh</option>
+                    <option value="Aswal">Aswal</option>
+                </select>
+                <label style="margin-left: 10px;">
+                    <strong>From</strong>
+                </label>
+                <input type="date" id="mainStartDate" class="int-productdata">
+                <label style="margin-left: 10px;">
+                    <strong>To</strong>
+                </label>
+                <input type="date" id="upapply" class="int-productdata">
+                <button type="button" class="int-productdata btn btn-primary mb-2 float-end" title="Apply filters">
+                    <img src="assets/images/double-check.gif" alt="img"
+                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                </button>
+                <canvas id="employeeTransferChart"
+                    style="margin-top: 30px; width: 100% !important; height: auto;"></canvas>
+            </div>
+        </div>
+        <!-- end preview-->
+        <div class="tab-pane" id="userprochart">
+            <!-- Filters (same as you requested) -->
+            <!-- Filters -->
+            <div class="col-12">
+                <div class="card widget-flat" style="max-height:500px; height:fit-content;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+                            <div class="app-search dropdown">
+                                <form>
+                                    <div>
+                                        <input type="text" class="form-control" placeholder="Search..." id="bb"
+                                            style=" border-radius: 5px; background-color: #eeeeee;">
+                                        <span class="search-icon">
+                                            <img src="assets/images/searchicon.png" alt="img" style="height:20px;">
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                <select id="upfilter" class="int-productdata">
+                                    <option value="all" selected>Show All
+                                    </option>
+                                    <option value="Transfer To Warranty Helpline">
+                                        Transfer To Warranty
+                                        Helpline
+                                    </option>
+                                    <option value="Transfer To Helpline AOD">
+                                        Transfer To Helpline AOD
+                                    </option>
+                                    <option value="Transfer To Webchat AOD">
+                                        Transfer To Webchat AOD</option>
+                                    <option value="Transfer To Helpline">
+                                        Transfer To Helpline</option>
+                                    <option value="Transfer To Smartcare">
+                                        Transfer To Smartcare</option>
+                                    <option value="Call Back">Call
+                                        Back</option>
+                                    <option value="Call Complete">Call
+                                        Complete</option>
+                                    <option value="Call disconnected by customer">
+                                        Call
+                                        disconnected by
+                                        customer</option>
+                                    <option value="Complaint status">
+                                        Complaint
+                                        status</option>
+                                    <option value="NCT">NCT</option>
+                                    <option value="Partial Success">Partial
+                                        Success</option>
+                                    <option value="Service Complaint Status">
+                                        Service
+                                        Complaint Status</option>
+                                    <option value="Service Lead status">
+                                        Service
+                                        Lead status</option>
+                                    <option value="Warranty related">
+                                        Warranty
+                                        related</option>
+                                </select>
+                            </div>
+                            <div title="Select data range for your data" class="app-search dropdown">
+                                <input name="range" type="text" class="form-control date" data-toggle="date-picker"
+                                    data-picker="true" data-locale="{'format': 'DD/MM hh:mm A'}"
+                                    style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;" value>
+                                <span class="search-icon">
+                                    <img src="assets/images/daterange.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </span>
+                            </div>
+                            <div>
+                                <button type="button" class="int-productdata btn btn-primary mb-2" title="Apply filters"
+                                    style="display: flex; justify-content: space-between; gap:5px;">
+                                    <img src="assets/images/double-check.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </button>
+                            </div>
+                            <div class="float-end">
+                                <button type="button" class="int-productdata btn btn-danger mb-2 me-2"
+                                    title="Download data"
+                                    style="display: flex; justify-content: space-between; gap:5px;">
+                                    <img src="assets/images/download-folder.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="advisor-table-container appointment-table" id="tailwind-table">
+                            <table class="advisor-table table table-bordered table-centered mb-0" id="table">
+                                <thead>
+                                    <tr>
+                                        <th class="sticky left-0 top-0 z-20"">
+																						Advisor Name</th>
+																					<th>Total Assign</th>
+																					<th>Completed</th>
+																					<th>Pending</th>
+																					<th>Transfer To Warranty Helpline
+																					</th>
+																					<th>Transfer To Helpline AOD</th>
+																					<th>Transfer To Webchat AOD</th>
+																					<th>Transfer To Helpline</th>
+																					<th>Transfer To Smartcare</th>
+																					<th>Call Back</th>
+																					<th>Call Complete</th>
+																					<th>Call disconnected by customer
+																					</th>
+																					<th>Complaint status</th>
+																					<th>NCT</th>
+																					<th>Partial Success</th>
+																					<th>Service Complaint Status</th>
+																					<th>Service Lead status</th>
+																					<th>Warranty related</th>
+																					<th class=" sticky right-0 top-0 z-20">
+                                            Total Average Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bbb">
+                                    <tr>
+                                        <th class="sticky left-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            Gaurav</th>
+                                        <td>200</td>
+                                        <td>150</td>
+                                        <td>50</td>
+                                        <td>10 (14 Minutes)</td>
+                                        <td>12 (13 Minutes)</td>
+                                        <td>9 (12 Minutes)</td>
+                                        <td>11 (13 Minutes)</td>
+                                        <td>8 (11 Minutes)</td>
+                                        <td>10 (12 Minutes)</td>
+                                        <td>15 (11 Minutes)</td>
+                                        <td>10 (10 Minutes)</td>
+                                        <td>12 (14 Minutes)</td>
+                                        <td>8 (12 Minutes)</td>
+                                        <td>9 (11 Minutes)</td>
+                                        <td>6 (13 Minutes)</td>
+                                        <td>10 (14 Minutes)</td>
+                                        <td>10 (13 Minutes)</td>
+                                        <td class="sticky right-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            <b>12.4 Minutes</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="sticky left-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            Singh</th>
+                                        <td>180</td>
+                                        <td>140</td>
+                                        <td>40</td>
+                                        <td>11 (12 Minutes)</td>
+                                        <td>10 (11 Minutes)</td>
+                                        <td>10 (13 Minutes)</td>
+                                        <td>10 (14 Minutes)</td>
+                                        <td>9 (12 Minutes)</td>
+                                        <td>9 (10 Minutes)</td>
+                                        <td>14 (10 Minutes)</td>
+                                        <td>9 (11 Minutes)</td>
+                                        <td>10 (14 Minutes)</td>
+                                        <td>8 (12 Minutes)</td>
+                                        <td>8 (13 Minutes)</td>
+                                        <td>7 (11 Minutes)</td>
+                                        <td>7 (12 Minutes)</td>
+                                        <td>8 (13 Minutes)</td>
+                                        <td class="sticky right-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            <b>11.9 Minutes</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="sticky left-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            Aswal</th>
+                                        <td>170</td>
+                                        <td>130</td>
+                                        <td>40</td>
+                                        <td>9 (11 Minutes)</td>
+                                        <td>10 (12 Minutes)</td>
+                                        <td>8 (11 Minutes)</td>
+                                        <td>9 (10 Minutes)</td>
+                                        <td>7 (12 Minutes)</td>
+                                        <td>10 (11 Minutes)</td>
+                                        <td>13 (12 Minutes)</td>
+                                        <td>9 (10 Minutes)</td>
+                                        <td>10 (13 Minutes)</td>
+                                        <td>7 (12 Minutes)</td>
+                                        <td>8 (11 Minutes)</td>
+                                        <td>6 (13 Minutes)</td>
+                                        <td>7 (14 Minutes)</td>
+                                        <td>7 (12 Minutes)</td>
+                                        <td class="sticky right-0 z-10" style="background-color: #1a1a1a; color:#fff;">
+                                            <b>11.6 Minutes</b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th class="sticky left-0 z-10" style="text-align-last: center;">
+                                            Total</th>
+                                        <th>550</th>
+                                        <th>420</th>
+                                        <th>130</th>
+                                        <th>30 (12 Minutes)</th>
+                                        <th>32 (12 Minutes)</th>
+                                        <th>27 (12 Minutes)</th>
+                                        <th>30 (12 Minutes)</th>
+                                        <th>24 (11 Minutes)</th>
+                                        <th>29 (11 Minutes)</th>
+                                        <th>42 (11 Minutes)</th>
+                                        <th>28 (10 Minutes)</th>
+                                        <th>32 (13 Minutes)</th>
+                                        <th>23 (12 Minutes)</th>
+                                        <th>25 (11 Minutes)</th>
+                                        <th>19 (12 Minutes)</th>
+                                        <th>24 (13 Minutes)</th>
+                                        <th>25 (12 Minutes)</th>
+                                        <th class=" sticky right-0 z-10" <b>
+                                            </b>
+                                            11.97
+                                            Minutes</b>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end card-body -->
+                </div>
+                <!-- end card-->
+            </div>
+        </div>
+        <!-- end preview code-->
+    </div>
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <script src="assets/js/table search int base.js"></script>
+    <script src="assets/js/row bg.js"></script>
+    <script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+    <script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+    <script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+    <script src="assets/js/vendor/Chart.bundle.min.js"></script>
+    <script src="assets/js/summary.js"></script>
+    <!-- third party js ends -->
+    <!-- demo app -->
+    <script src="assets/js/pages/demo.dashboard-projects.js"></script>
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="assets/js/productivity-chart.js"></script>
+
+</body>
+
+</html>

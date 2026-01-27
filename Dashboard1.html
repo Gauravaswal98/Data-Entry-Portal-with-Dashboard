@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Dashboard</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta content="Coderthemes" name="author">
+	<link rel="shortcut icon" href="assets/images/tablogo.png" type="png">
+	<link href="assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+	<link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<style>
+		thead,
+		tbody {
+			text-align-last: center;
+			text-wrap: nowrap;
+		}
+
+		tbody tr {
+			text-align-last: left;
+		}
+
+		.appointment-table {
+			max-height: 300px;
+			height: fit-content;
+		}
+
+		.appointment-table table td {
+			padding: 5px;
+			font-size: 14px;
+		}
+
+		.appointment-table table th {
+			padding: 5px;
+			font-size: 14px;
+		}
+
+		.appointment-table table tbody tr {
+			margin-top: 50px;
+		}
+
+
+
+		#tailwind-table .sticky {
+			position: sticky;
+		}
+
+		#tailwind-table .left-0 {
+			left: 0;
+		}
+
+		#tailwind-table .right-0 {
+			right: 0;
+		}
+
+		#tailwind-table .top-0 {
+			top: 0;
+		}
+
+		#tailwind-table .z-10 {
+			z-index: 10;
+		}
+
+		#tailwind-table .z-20 {
+			z-index: 20;
+		}
+
+
+		/* Page loader style */
+		.loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 0;
+			/* Start with 0 width */
+			height: 4px;
+			background-color: #ce5a2c;
+			/* Initial color */
+			z-index: 9999;
+			transition: width 0.1s linear;
+			/* Smooth transition */
+		}
+
+
+		.employee-performance-wrapper {
+			max-height: 300px;
+			overflow-y: auto;
+			position: relative;
+		}
+
+		.employee-performance-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 14px;
+			border-spacing: 0;
+		}
+
+		.employee-performance-table th,
+		.employee-performance-table td {
+			padding: 8px 12px;
+			text-align: center;
+			white-space: nowrap;
+			vertical-align: middle;
+		}
+
+		.employee-performance-table thead th {
+			position: sticky;
+			top: 0;
+			background-color: #0b4d99;
+			z-index: 2;
+		}
+
+		.employee-performance-table tfoot td {
+			position: sticky;
+			bottom: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 1;
+			font-weight: bold;
+		}
+
+		.employee-performance-table .deficit-alert {
+			color: red;
+			font-weight: bold;
+		}
+
+		.advisor-table-container {
+			max-height: 300px;
+			overflow-y: auto;
+			display: block;
+		}
+
+		.advisor-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.advisor-table th,
+		.advisor-table td {
+			text-align: center;
+			vertical-align: middle;
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			padding: 8px;
+		}
+
+		.advisor-table thead th {
+			position: sticky;
+			top: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 2;
+		}
+
+		.advisor-table tfoot th {
+			position: sticky;
+			bottom: 0;
+			background-color: #0b4d99;
+			color: #fff;
+			z-index: 2;
+		}
+
+		.advisor-table th.sticky.left-0,
+		.advisor-table td.sticky.left-0 {
+			position: sticky;
+			left: 0;
+			background-color: #aa69df;
+			z-index: 3;
+		}
+
+		.advisor-table td.sticky.right-0,
+		.advisor-table th.sticky.right-0 {
+			position: sticky;
+			right: 0;
+			background-color: #9966FF;
+			color: white;
+			z-index: 3;
+		}
+
+		#advisorBarChart {
+			height: 300px !important;
+			/* ✅ Force fixed height */
+		}
+
+		#productivityChart {
+			height: 300px !important;
+			/* ✅ Force fixed height */
+		}
+	</style>
+</head>
+
+<body class="loading"
+	data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":false, "showRightSidebarOnStart": true}'>
+	<div class="loader"></div>
+	<div class="wrapper">
+		<div id="sidebar-container"></div>
+		<!-- JavaScript to load sidebar.html and set active class -->
+		<script>
+			fetch('sidemenu.html')
+				.then(response => response.text())
+				.then(data => {
+					document.getElementById('sidebar-container').innerHTML = data;
+					const currentPage = window.location.pathname.split('/').pop();
+					const navLinks = document.querySelectorAll('.side-nav-link');
+					navLinks.forEach(link => {
+						const linkPage = link.getAttribute('href');
+						// Mapping sub-pages to main links
+						const isDispositionPage = ['disposition-data.html', 'add-disposition-data.html'].includes(
+							currentPage) && linkPage === 'disposition-data.html';
+						const isHelplinePage = ['helpline-aod.html', 'add-helpline-aod.html'].includes(
+							currentPage) && linkPage === 'helpline-aod.html';
+						const isWebchatPage = ['webchat-aod.html', 'add-webchat-aod.html'].includes(currentPage) &&
+							linkPage === 'webchat-aod.html';
+						// Final condition to set active class
+						if (linkPage === currentPage || isDispositionPage || isHelplinePage || isWebchatPage) {
+							link.classList.add('active');
+						}
+					});
+				});
+		</script>
+		<div class="content-page" style="background-color: #e7e5e5;">
+			<div class="content" style="background-color:none; margin-bottom: -24px;">
+				<div class="navbar-custom" style="box-shadow: 0 5px 10px #64c6ff2f;">
+					<ul class="list-unstyled topbar-menu float-end mb-0">
+						<li class="dropdown notification-list d-lg-none">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
+								role="button" aria-haspopup="false" aria-expanded="false">
+								<i class="dripicons-search noti-icon"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-animated dropdown-lg p-0">
+								<form class="p-3">
+									<input type="text" class="form-control" placeholder="Search ..."
+										aria-label="Recipient's username">
+								</form>
+							</div>
+						</li>
+						<li class="notification-list" style="margin-top:15px;">
+							<a class="nav-link end-bar-toggle" href="notepad.html">
+								<img src="assets/images/journal.gif" alt="img" class="dripicons-clipboard noti-icon"
+									style=" border-radius:5px; height: 40px;">
+								Add Notes
+							</a>
+						</li>
+						<li class="dropdown notification-list" style="margin-top:20px;" title="Notifications">
+							<a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown"
+								data-bs-auto-close="outside" href="#" role="button" aria-haspopup="false"
+								aria-expanded="false">
+								<img src="assets/images/notification.gif" alt="img"
+									style=" border-radius:5px; height: 30px;">
+							</a>
+							<div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg">
+								<!-- item-->
+								<div class="dropdown-item noti-title" style="margin-bottom: -15px;">
+									<h5 class="m-0">
+										<span class="float-end">
+											<img src="assets/images/callback-noti.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px; margin-top: -5px;">
+										</span>
+										Call Back Notifications
+									</h5>
+								</div>
+								<hr>
+								<div style="max-height: 230px;" data-simplebar>
+									<!-- item-->
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: rgb(238, 161, 17) !important;">
+												Almost
+												1
+												hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Disposition
+													Data
+												</b>
+											</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: rgb(219, 95, 12) !important;">
+												It's
+												been 1
+												hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Helpline
+													AOD
+												</b>
+											</small>
+										</p>
+									</div>
+									<div class="dropdown-item notify-item">
+										<div class="notify-icon">
+											<img src="assets/images/call-back.gif" alt="img"
+												class="dripicons-clipboard noti-icon"
+												style=" border-radius:5px; height: 30px;">
+										</div>
+										<p class="notify-details" style="user-select: none;">
+											Please call back at
+											<font style="user-select: text; font-weight: 600;">
+												7357870339
+											</font>
+											<small class="text-muted" style="color: red !important;">
+												It's
+												been
+												more than 1 hour :
+												<b style="font-weight: 700; font-size: 12px;">
+													Webchat
+													AOD
+												</b>
+											</small>
+										</p>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li class="dropdown notification-list">
+							<a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
+								href="#" role="button" aria-haspopup="false" aria-expanded="false" style="height:1px">
+								<span class="account-user-avatar">
+									<img src="assets/images/userlogo.gif" alt="user-image" class="rounded-circle">
+								</span>
+								<span>
+									<span>
+										<span class="account-user-name">Gaurav</span>
+										<span class="account-position">Admin</span>
+									</span>
+							</a>
+							<div
+								class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown">
+								<a href="ChangePassword.html" class="dropdown-item notify-item">
+									<img src="assets/images/password.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Change Password</span>
+								</a>
+								<a href="Login page.html" class="dropdown-item notify-item">
+									<img src="assets/images/log-out.gif" alt="img"
+										style="border-radius:5px; height: 30px;">
+									<span>Logout</span>
+								</a>
+							</div>
+						</li>
+					</ul>
+					<button class="button-menu-mobile open-left">
+						<img src="assets/images/menu.gif" alt="menu" style="border-radius:5px; height:40px;">
+					</button>
+					<!-- <div class="app-search dropdown d-none d-lg-block">
+						<form>
+							<div class="input-group">
+								<input type="text" class="form-control dropdown-toggle" placeholder="Search..."
+									id="top-search">
+								<span class="mdi mdi-magnify search-icon"></span>
+								<button class="input-group-text btn-primary" type="submit">Search</button>
+							</div>
+						</form>
+
+					</div> -->
+				</div>
+				<div class="container-fluid">
+					<!-- <div class="row">
+                                <div class="col-12">
+                                    <div
+                                        class="page-title-box d-flex justify-content-between">
+                                        <h1 class="page-title"><img
+                                                src="assets/images/dashboard.gif"
+                                                alt="img"
+                                                style="border-radius:5px; height: 40px;">
+                                            Dashboard</h1>
+                                        <div class="app-search dropdown float-end"
+											style="background-color:none; margin: 2% 0 0 0;">
+											<form>
+												<div>
+													<input type="text" class="form-control" placeholder="Search..."
+														id="gfg"
+														style="background-color: #ffffff; border-radius: 5px;">
+													<span class="search-icon"> <img src="assets/images/searchicon.png"
+															alt="img"
+															style="height:20px;">
+													</span>
+												</div>
+											</form>
+										</div>
+                                    </div>
+                                </div>
+                            </div> -->
+					<div class="row" style="margin-top:15px;">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body overflow-auto">
+									<div class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+										<h4 class="header-title">
+											<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+											Disposition
+											Data
+										</h4>
+									</div>
+									<hr>
+									<!-- 🔹 Main Chart Filter -->
+									<div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+										<div>
+											<label>
+												<strong>
+													Main Chart -
+													Select
+													Page
+												</strong>
+											</label>
+											<select id="mainPageFilter" class="int-productdata form-select"
+												onchange="filterMainCharts()" style="min-width: 200px;">
+												<option value="disposition">
+													Disposition
+													Data
+												</option>
+												<option value="helpline">
+													Helpline
+													AOD
+												</option>
+												<option value="webchat">
+													Webchat
+													AOD
+												</option>
+												<option value="all" selected>
+													Show
+													All
+												</option>
+											</select>
+										</div>
+										<div>
+											<label>
+												<strong>
+													Select
+													Advisor
+												</strong>
+											</label>
+											<select id="advisorFilter" class="int-productdata form-select"
+												style="min-width: 200px;">
+												<option value="Advisor A">
+													Advisor
+													A
+												</option>
+												<option value="Advisor B">
+													Advisor
+													B
+												</option>
+												<option value="Advisor C">
+													Advisor
+													C
+												</option>
+												<option value="all" selected>
+													Show
+													All
+												</option>
+											</select>
+										</div>
+										<div class="d-flex gap-2 align-items-end">
+											<div>
+												<label>
+													<strong>
+														Start
+														Date
+													</strong>
+												</label>
+												<input type="date" id="mainStartDate"
+													class="int-productdata form-control">
+											</div>
+											<div>
+												<label>
+													<strong>
+														End
+														Date
+													</strong>
+												</label>
+												<input type="date" id="mainEndDate"
+													class="int-productdata form-control">
+											</div>
+											<div class="d-flex gap-2">
+												<button type="button" id="apply" onclick="filterMainCharts()"
+													class="int-productdata btn btn-primary" title="Apply filters"
+													style="display: flex; justify-content: space-between; gap:5px;">
+													<img src="assets/images/double-check.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+												<button type="button" id="mainDownloadBtn"
+													class="int-productdata btn btn-danger" title="Download data"
+													style="display: flex; justify-content: space-between; gap:5px;">
+													<img src="assets/images/download-folder.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+											</div>
+										</div>
+									</div>
+									<div style="margin-bottom: 20px;">
+										<label style="margin-right: 10px;">
+											Start Date: <input type="date" id="startDate"
+												style="margin-left: 5px; padding: 5px;" />
+										</label>
+										<label style="margin-right: 10px;">
+											End Date: <input type="date" id="endDate"
+												style="margin-left: 5px; padding: 5px;" />
+										</label>
+										<button onclick="filterStackedData()"
+											style="padding: 6px 12px; margin-right: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px;">
+											Filter
+										</button>
+										<button onclick="downloadStackedExcel()"
+											style="padding: 6px 12px; background-color: #27ae60; color: white; border: none; border-radius: 4px;">
+											Download Excel
+										</button>
+									</div>
+
+									<div style="width: 100%; max-width: 1000px;">
+										<canvas id="safeBarChart1" height="250"></canvas>
+
+										<!-- Chart height reduced -->
+									</div>
+									<!-- Main Charts -->
+								</div>
+							</div>
+							<!-- end card-->
+						</div>
+						<!-- end col-->
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body overflow-auto">
+									<div class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+										<h4 class="header-title">
+											<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+											TAT
+											Data
+										</h4>
+									</div>
+									<hr>
+									<!-- TAT Chart Filter -->
+									<div class="d-flex justify-content-between gap-2 mb-3 align-items-end flex-wrap">
+										<div>
+											<label>
+												<strong>
+													TAT Chart -
+													Select
+													Page
+												</strong>
+											</label>
+											<select id="tatPageFilter" class="int-productdata form-select"
+												onchange="filterTATCharts()" style="min-width: 200px;">
+												<option value="disposition">
+													Disposition
+													Data
+												</option>
+												<option value="helpline">
+													Helpline
+													AOD
+												</option>
+												<option value="webchat">
+													Webchat
+													AOD
+												</option>
+												<option value="all" selected>
+													Show
+													All
+												</option>
+											</select>
+										</div>
+										<div>
+											<label>
+												<strong>
+													Select
+													Advisor
+												</strong>
+											</label>
+											<select id="advisorFilter" class="int-productdata form-select"
+												style="min-width: 200px;">
+												<option value="Advisor A">
+													Advisor
+													A
+												</option>
+												<option value="Advisor B">
+													Advisor
+													B
+												</option>
+												<option value="Advisor C">
+													Advisor
+													C
+												</option>
+												<option value="all" selected>
+													Show
+													All
+												</option>
+											</select>
+										</div>
+										<div class="d-flex gap-2 align-items-end">
+											<div>
+												<label>
+													<strong>
+														Start
+														Date
+													</strong>
+												</label>
+												<input type="date" id="tatStartDate"
+													class="int-productdata form-control">
+											</div>
+											<div>
+												<label>
+													<strong>
+														End
+														Date
+													</strong>
+												</label>
+												<input type="date" id="tatEndDate" class="int-productdata form-control">
+											</div>
+											<div class="d-flex gap-2">
+												<button type="button" id="apply" onclick="filterTATCharts()"
+													class="int-productdata btn btn-primary" title="Apply filters"
+													style="display: flex; justify-content: space-between; gap:5px;">
+													<img src="assets/images/double-check.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+												<button type="button" id="tatDownloadBtn"
+													class="int-productdata btn btn-danger" title="Download data"
+													style="display: flex; justify-content: space-between; gap:5px;">
+													<img src="assets/images/download-folder.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+											</div>
+										</div>
+									</div>
+									<!-- TAT Charts -->
+									<div class="row">
+										<div class="col-md-4 mb-4" id="chart-tat-disposition" style="display: none;">
+											<canvas id="tatChartDisposition"></canvas>
+											<div class="chart-title text-center fw-bold mt-2"
+												id="title-tat-disposition"></div>
+										</div>
+										<div class="col-md-4 mb-4" id="chart-tat-helpline" style="display: none;">
+											<canvas id="tatChartHelpline"></canvas>
+											<div class="chart-title text-center fw-bold mt-2" id="title-tat-helpline">
+											</div>
+										</div>
+										<div class="col-md-4 mb-4" id="chart-tat-webchat" style="display: none;">
+											<canvas id="tatChartWebchat"></canvas>
+											<div class="chart-title text-center fw-bold mt-2" id="title-tat-webchat">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- end card-->
+						</div>
+						<!-- end col -->
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body">
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										Aspect
+										Productivity
+									</h4>
+									<ul class="nav nav-tabs nav-bordered mb-3">
+										<li class="nav-item">
+											<a href="#input-types-preview" data-bs-toggle="tab" aria-expanded="false"
+												class="nav-link active">
+												View
+												By Chart
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="#input-types-code" data-bs-toggle="tab" aria-expanded="true"
+												class="nav-link">
+												View By Data
+											</a>
+										</li>
+									</ul>
+									<!-- end nav-->
+									<div class="tab-content">
+										<div class="tab-pane show active" id="input-types-preview">
+											<div style="margin-bottom: 20px;">
+												<select id="chartViewMode" class="int-productdata">
+													<option value="metric">Total (All Employees)</option>
+													<option value="employee">Individual Employee</option>
+												</select>
+												<select id="employeeFilterChart" style="display:none;"
+													class="int-productdata">
+													<option value="Bhagyashree Krishna Yel">
+														Bhagyashree
+														Krishna
+														Yel
+													</option>
+													<option value="Sajida Ansari">
+														Sajida
+														Ansari
+													</option>
+													<option value="Chhaya Digambar Narkar">
+														Chhaya
+														Digambar
+														Narkar
+													</option>
+													<option value="Zeeshan Salim Glasswala">
+														Zeeshan
+														Salim
+														Glasswala
+													</option>
+													<option value="Santosh Nirmal">
+														Santosh
+														Nirmal
+													</option>
+													<option value="Akshaya Dixit">
+														Akshaya
+														Dixit
+													</option>
+													<option value="Harshita Ghind">
+														Harshita
+														Ghind
+													</option>
+													<option value="Ashwini Ashok Kamble">
+														Ashwini
+														Ashok
+														Kamble
+													</option>
+													<option value="Neeta Pawar">
+														Neeta
+														Pawar
+													</option>
+												</select>
+												<label style="margin-left: 10px;">
+													<strong>From</strong>
+												</label>
+												<input type="date" id="aspectStartDate" class="int-productdata">
+												<label style="margin-left: 10px;">
+													<strong>To</strong>
+												</label>
+												<input type="date" id="aspectEndDate" class="int-productdata">
+												<button type="button"
+													class="int-productdata btn btn-primary mb-2 float-end"
+													title="Apply filters">
+													<img src="assets/images/double-check.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+											</div>
+											<!-- Chart -->
+											<div style="padding: 0 20px; width: 100%; background-color: none;">
+												<canvas id="productivityChart"></canvas>
+											</div>
+											<!-- end row-->
+										</div>
+										<!-- end preview-->
+										<div class="tab-pane" id="input-types-code">
+											<div class="col-12">
+												<div class="card widget-flat"
+													style="max-height:500px; height:fit-content;">
+													<div class="card-body">
+														<div
+															class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+															<div class="app-search dropdown float-center">
+																<form>
+																	<div>
+																		<input type="text" class="form-control"
+																			placeholder="Search..." id="aa"
+																			style=" border-radius: 5px; background-color: #eeeeee;">
+																		<span class="search-icon">
+																			<img src="assets/images/searchicon.png"
+																				alt="img" style="height:20px;">
+																		</span>
+																	</div>
+																</form>
+															</div>
+															<div title="Select data range for your data"
+																class="app-search dropdown">
+																<input name="range" type="text"
+																	class="form-control date" data-toggle="date-picker"
+																	data-picker="true"
+																	data-locale="{'format': 'DD/MM hh:mm A'}"
+																	style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;"
+																	value>
+																<span class="search-icon">
+																	<img src="assets/images/daterange.gif" alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</span>
+															</div>
+															<div>
+																<button type="button"
+																	class="int-productdata btn btn-primary mb-2"
+																	title="Apply filters"
+																	style="display: flex; justify-content: space-between; gap:5px;">
+																	<img src="assets/images/double-check.gif" alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</button>
+															</div>
+															<div class="float-end">
+																<button onclick="downloadAdvisorProductivity()"
+																	type="button"
+																	class="int-productdata btn btn-danger mb-2 me-2"
+																	title="Download data"
+																	style="display: flex; justify-content: space-between; gap:5px;">
+																	<img src="assets/images/download-folder.gif"
+																		alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</button>
+															</div>
+														</div>
+														<div class="employee-performance-wrapper appointment-table">
+															<table id="table"
+																class="employee-performance-table table table-bordered table-centered mb-0">
+																<thead>
+																	<tr>
+																		<th>Date</th>
+																		<th>Employee Name</th>
+																		<th>Process</th>
+																		<th>Total Agent Calls</th>
+																		<th>Login Target</th>
+																		<th>Login Hours</th>
+																		<th>Deficit</th>
+																		<th>Not Ready %</th>
+																		<th>Utilization %</th>
+																		<th>Occupancy %</th>
+																		<th>AHT</th>
+																	</tr>
+																</thead>
+																<tbody id="advisor">
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Bhagyashree Krishna Yel</td>
+																		<td>Tiger Team – Helpline</td>
+																		<td>517</td>
+																		<td>72.00</td>
+																		<td>69.24</td>
+																		<td class="deficit-alert">2:35:34</td>
+																		<td>12%</td>
+																		<td>88%</td>
+																		<td>78%</td>
+																		<td>0:06:55</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Sajida Ansari</td>
+																		<td>Tiger Team – Helpline</td>
+																		<td>598</td>
+																		<td>72.00</td>
+																		<td>68.03</td>
+																		<td class="deficit-alert">3:56:01</td>
+																		<td>10%</td>
+																		<td>90%</td>
+																		<td>81%</td>
+																		<td>0:07:10</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Chhaya Digambar Narkar</td>
+																		<td>Tiger Team – Helpline</td>
+																		<td>603</td>
+																		<td>81.00</td>
+																		<td>80.55</td>
+																		<td>0:04:36</td>
+																		<td>10%</td>
+																		<td>90%</td>
+																		<td>83%</td>
+																		<td>0:06:30</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Zeeshan Salim Glasswala</td>
+																		<td>Tiger Team – Smart Car</td>
+																		<td>187</td>
+																		<td>72.00</td>
+																		<td>72.11</td>
+																		<td>0:00:00</td>
+																		<td>10%</td>
+																		<td>90%</td>
+																		<td>66%</td>
+																		<td>0:07:45</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Santosh Nirmal</td>
+																		<td>Tiger Team – Warranty</td>
+																		<td>43</td>
+																		<td>72.00</td>
+																		<td>74.20</td>
+																		<td>0:00:00</td>
+																		<td>5%</td>
+																		<td>82%</td>
+																		<td>89%</td>
+																		<td>0:06:05</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Akshaya Dixit</td>
+																		<td>Tiger Team – Warranty</td>
+																		<td>335</td>
+																		<td>81.00</td>
+																		<td>82.49</td>
+																		<td>0:00:00</td>
+																		<td>8%</td>
+																		<td>92%</td>
+																		<td>39%</td>
+																		<td>0:07:20</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Harshita Ghind</td>
+																		<td>Tiger Team – Warranty</td>
+																		<td>54</td>
+																		<td>54.00</td>
+																		<td>50.54</td>
+																		<td class="deficit-alert">3:05:56</td>
+																		<td>9%</td>
+																		<td>91%</td>
+																		<td>26%</td>
+																		<td>0:06:50</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Ashwini Ashok Kamble</td>
+																		<td>Tiger Team – Webchat</td>
+																		<td>780</td>
+																		<td>72.00</td>
+																		<td>65.52</td>
+																		<td class="deficit-alert">6:07:46</td>
+																		<td>11%</td>
+																		<td>89%</td>
+																		<td>62%</td>
+																		<td>0:07:35</td>
+																	</tr>
+																	<tr>
+																		<td>2025-06-28</td>
+																		<td>Neeta Pawar</td>
+																		<td>Tiger Team – Webchat</td>
+																		<td>306</td>
+																		<td>81.00</td>
+																		<td>82.26</td>
+																		<td>0:00:00</td>
+																		<td>10%</td>
+																		<td>90%</td>
+																		<td>69%</td>
+																		<td>0:06:25</td>
+																	</tr>
+																</tbody>
+																<tfoot>
+																	<tr>
+																		<td colspan="3" style="text-align: center;">
+																			<strong>Total</strong>
+																		</td>
+																		<td>2337</td>
+																		<td>657.00</td>
+																		<td>646.57</td>
+																		<td>15:49:53</td>
+																		<td>10%</td>
+																		<td>30%</td>
+																		<td>62%</td>
+																		<td>0:06:55</td>
+																	</tr>
+																</tfoot>
+															</table>
+														</div>
+													</div>
+													<!-- end card-body -->
+												</div>
+												<!-- end card-->
+											</div>
+											<!-- end col -->
+										</div>
+										<!-- end preview code-->
+									</div>
+									<!-- end tab-content-->
+								</div>
+								<!-- end card-body -->
+							</div>
+							<!-- end card -->
+						</div>
+						<!-- end col -->
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body">
+									<h4 class="header-title">
+										<img src="assets/images/user-product.gif" alt="img" style="height:45px;">
+										User
+										Productivity
+									</h4>
+									<ul class="nav nav-tabs nav-bordered mb-3">
+										<li class="nav-item">
+											<a href="#userprodata" data-bs-toggle="tab" aria-expanded="false"
+												class="nav-link active">
+												View
+												By Chart
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="#userprochart" data-bs-toggle="tab" aria-expanded="true"
+												class="nav-link">
+												View By Data
+											</a>
+										</li>
+									</ul>
+									<!-- end nav-->
+									<div class="tab-content">
+										<div class="tab-pane show active" id="userprodata">
+											<div style="margin-bottom: 20px; background-color: none;">
+												<select id="filecategoryFilter" class="int-productdata">
+													<option value="disposition_data" selected>
+														Disposition
+														Data
+													</option>
+													<option value="helpline_aod">Helpline AOD</option>
+													<option value="webchat_aod">Webchat AOD</option>
+												</select>
+												<select id="categoryFilter" class="int-productdata">
+													<option value="total">
+														Total
+														(All
+														Employees)
+													</option>
+													<option value="employee">
+														Individual
+														Employee
+													</option>
+												</select>
+												<select id="employeeFilter" style="display: none;"
+													class="int-productdata">
+													<option value="Gaurav">Gaurav</option>
+													<option value="Anjali">Anjali</option>
+													<option value="Vikram">Vikram</option>
+													<option value="Riya">Riya</option>
+													<option value="Neha">Neha</option>
+													<option value="Priya">Priya</option>
+													<option value="Rahul">Rahul</option>
+													<option value="Sneha">Sneha</option>
+													<option value="Amit">Amit</option>
+													<option value="Kavita">Kavita</option>
+												</select>
+												<label style="margin-left: 10px;">
+													<strong>From</strong>
+												</label>
+												<input type="date" id="mainStartDate" class="int-productdata">
+												<label style="margin-left: 10px;">
+													<strong>To</strong>
+												</label>
+												<input type="date" id="mainEndDate" class="int-productdata">
+												<button type="button"
+													class="int-productdata btn btn-primary mb-2 float-end"
+													title="Apply filters">
+													<img src="assets/images/double-check.gif" alt="img"
+														style="border-radius:5px; height: 30px; margin-top: -5px;">
+												</button>
+											</div>
+											<!-- Chart -->
+											<div style="padding: 0 20px; width: 100%; background-color: none;">
+												<canvas id="advisorBarChart"></canvas>
+											</div>
+										</div>
+										<!-- end preview-->
+										<div class="tab-pane" id="userprochart">
+											<!-- Filters (same as you requested) -->
+											<!-- Filters -->
+											<div class="col-12">
+												<div class="card widget-flat"
+													style="max-height:500px; height:fit-content;">
+													<div class="card-body">
+														<div
+															class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+															<div class="app-search dropdown">
+																<form>
+																	<div>
+																		<input type="text" class="form-control"
+																			placeholder="Search..." id="bb"
+																			style=" border-radius: 5px; background-color: #eeeeee;">
+																		<span class="search-icon">
+																			<img src="assets/images/searchicon.png"
+																				alt="img" style="height:20px;">
+																		</span>
+																	</div>
+																</form>
+															</div>
+															<div>
+																<select id="filecategorytableFilter"
+																	class="int-productdata">
+																	<option value="disposition_data" selected>
+																		Disposition
+																		Data
+																	</option>
+																	<option value="helpline_aod">Helpline AOD</option>
+																	<option value="webchat_aod">Webchat AOD</option>
+																</select>
+															</div>
+															<div title="Select data range for your data"
+																class="app-search dropdown">
+																<input name="range" type="text"
+																	class="form-control date" data-toggle="date-picker"
+																	data-picker="true"
+																	data-locale="{'format': 'DD/MM hh:mm A'}"
+																	style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;"
+																	value>
+																<span class="search-icon">
+																	<img src="assets/images/daterange.gif" alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</span>
+															</div>
+															<div>
+																<button type="button"
+																	class="int-productdata btn btn-primary mb-2"
+																	title="Apply filters"
+																	style="display: flex; justify-content: space-between; gap:5px;">
+																	<img src="assets/images/double-check.gif" alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</button>
+															</div>
+															<div class="float-end">
+																<button onclick="downloadAdvisorProductivity()"
+																	type="button"
+																	class="int-productdata btn btn-danger mb-2 me-2"
+																	title="Download data"
+																	style="display: flex; justify-content: space-between; gap:5px;">
+																	<img src="assets/images/download-folder.gif"
+																		alt="img"
+																		style="border-radius:5px; height: 30px; margin-top: -5px;">
+																</button>
+															</div>
+														</div>
+														<div class="advisor-table-container appointment-table">
+															<table
+																class="advisor-table table table-bordered table-centered mb-0"
+																id="table">
+																<thead>
+																	<tr>
+																		<th>Advisor Name</th>
+																		<th>Total Assign</th>
+																		<th>Completed</th>
+																		<th>Pending</th>
+																		<th>Transfer To Helpline</th>
+																		<th>Transfer To Warranty</th>
+																		<th>Transfer To Smartcare</th>
+																		<th>Call Complete</th>
+																		<!-- ✅ New column -->
+																		<th>Total Average Time</th>
+																	</tr>
+																</thead>
+																<tbody id="bbb">
+																	<tr>
+																		<td>Gaurav</td>
+																		<td>200</td>
+																		<td>100</td>
+																		<td>100</td>
+																		<td>20 (12 Minutes)</td>
+																		<td>25 (16 Minutes)</td>
+																		<td>14 (11 Minutes)</td>
+																		<td>85 (10 Minutes)</td>
+																		<!-- ✅ -->
+																		<td>12 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Anjali</td>
+																		<td>180</td>
+																		<td>130</td>
+																		<td>50</td>
+																		<td>15 (11 Minutes)</td>
+																		<td>30 (15 Minutes)</td>
+																		<td>13 (12 Minutes)</td>
+																		<td>105 (11 Minutes)</td>
+																		<td>11.4 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Vikram</td>
+																		<td>150</td>
+																		<td>90</td>
+																		<td>60</td>
+																		<td>18 (13 Minutes)</td>
+																		<td>22 (17 Minutes)</td>
+																		<td>15 (13 Minutes)</td>
+																		<td>78 (9 Minutes)</td>
+																		<td>12.8 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Riya</td>
+																		<td>220</td>
+																		<td>180</td>
+																		<td>40</td>
+																		<td>25 (10 Minutes)</td>
+																		<td>28 (14 Minutes)</td>
+																		<td>18 (10 Minutes)</td>
+																		<td>160 (12 Minutes)</td>
+																		<td>11.2 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Neha</td>
+																		<td>210</td>
+																		<td>160</td>
+																		<td>50</td>
+																		<td>22 (11 Minutes)</td>
+																		<td>24 (15 Minutes)</td>
+																		<td>17 (12 Minutes)</td>
+																		<td>145 (10 Minutes)</td>
+																		<td>11.6 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Priya</td>
+																		<td>190</td>
+																		<td>140</td>
+																		<td>50</td>
+																		<td>19 (12 Minutes)</td>
+																		<td>27 (14 Minutes)</td>
+																		<td>20 (13 Minutes)</td>
+																		<td>135 (11 Minutes)</td>
+																		<td>12 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Rahul</td>
+																		<td>175</td>
+																		<td>120</td>
+																		<td>55</td>
+																		<td>16 (11 Minutes)</td>
+																		<td>26 (13 Minutes)</td>
+																		<td>16 (11 Minutes)</td>
+																		<td>110 (10 Minutes)</td>
+																		<td>11 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Sneha</td>
+																		<td>185</td>
+																		<td>160</td>
+																		<td>25</td>
+																		<td>20 (10 Minutes)</td>
+																		<td>23 (12 Minutes)</td>
+																		<td>18 (12 Minutes)</td>
+																		<td>155 (12 Minutes)</td>
+																		<td>10.8 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Amit</td>
+																		<td>195</td>
+																		<td>150</td>
+																		<td>45</td>
+																		<td>21 (13 Minutes)</td>
+																		<td>20 (16 Minutes)</td>
+																		<td>17 (14 Minutes)</td>
+																		<td>140 (11 Minutes)</td>
+																		<td>12 Minutes</td>
+																	</tr>
+																	<tr>
+																		<td>Kavita</td>
+																		<td>205</td>
+																		<td>170</td>
+																		<td>35</td>
+																		<td>18 (12 Minutes)</td>
+																		<td>29 (15 Minutes)</td>
+																		<td>19 (12 Minutes)</td>
+																		<td>150 (10 Minutes)</td>
+																		<td>11.6 Minutes</td>
+																	</tr>
+																</tbody>
+																<tfoot>
+																	<tr>
+																		<th>Total</th>
+																		<th>1970</th>
+																		<th>1400</th>
+																		<th>570</th>
+																		<th>194</th>
+																		<th>284</th>
+																		<th>167</th>
+																		<th>1263 (108 Minutes)</th>
+																		<!-- ✅ Call Complete total with minutes -->
+																		<th>11.54 Minutes</th>
+																	</tr>
+																</tfoot>
+															</table>
+														</div>
+													</div>
+													<!-- end card-body -->
+												</div>
+												<!-- end card-->
+											</div>
+										</div>
+										<!-- end preview code-->
+									</div>
+									<!-- end tab-content-->
+								</div>
+								<!-- end card-body -->
+							</div>
+							<!-- end card -->
+						</div>
+						<!-- end col -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="footer" style="background-color:#fff;"></footer>
+		<script src="assets/js/vendor.min.js"></script>
+		<script src="assets/js/app.min.js"></script>
+		<script src="assets/js/table search int base.js"></script>
+		<script src="assets/js/row bg.js"></script>
+		<script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+		<script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+		<script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+		<script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+		<script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+		<script src="assets/js/vendor/Chart.bundle.min.js"></script>
+		<!-- third party js ends -->
+		<!-- demo app -->
+		<script src="assets/js/pages/demo.dashboard-projects.js"></script>
+		<!-- JavaScript -->
+
+		<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+		<!-- pending-complete chart start -->
+		<script>
+			(function () {
+				const canvas = document.getElementById("safeBarChart1");
+				if (!canvas || typeof Chart === 'undefined') return;
+
+				const ctxSafeBar1 = canvas.getContext("2d");
+
+				const labelsSafe1 = [
+					"Call Back", "Call Complete", "Disconnected", "Complaint",
+					"NCT", "Partial Success", "Service Status", "Lead Status",
+					"To Helpline", "Helpline AOD", "Smartcare", "Warranty Helpline",
+					"Webchat AOD", "Warranty"
+				];
+
+				const dataSafe1 = labelsSafe1.map(label => ({
+					label,
+					pending: Math.floor(Math.random() * 60) + 10,
+					complete: Math.floor(Math.random() * 70) + 20
+				}));
+
+				const chartSafe1 = new Chart(ctxSafeBar1, {
+					type: "bar",
+					data: {
+						labels: dataSafe1.map(d => d.label),
+						datasets: [
+							{
+								label: "Pending",
+								data: dataSafe1.map(d => d.pending),
+								backgroundColor: "#f39c12",
+								borderRadius: 6,
+								barThickness: 14
+							},
+							{
+								label: "Complete",
+								data: dataSafe1.map(d => d.complete),
+								backgroundColor: "#2ecc71",
+								borderRadius: 6,
+								barThickness: 14
+							}
+						]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: {
+								position: 'top',
+								labels: {
+									generateLabels: chart => {
+										const p = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+										const c = chart.data.datasets[1].data.reduce((a, b) => a + b, 0);
+										return [
+											{ text: `Pending (${p})`, fillStyle: "#f39c12", datasetIndex: 0 },
+											{ text: `Complete (${c})`, fillStyle: "#2ecc71", datasetIndex: 1 }
+										];
+									}
+								}
+							},
+							tooltip: {
+								mode: 'index',
+								intersect: false,
+								callbacks: {
+									label: ctx => `${ctx.dataset.label}: ${ctx.raw}`
+								}
+							}
+						},
+						interaction: { mode: 'index', intersect: false },
+						scales: {
+							x: {
+								stacked: true,
+								title: { display: true, text: "Disposition" },
+								ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 }
+							},
+							y: {
+								stacked: true,
+								beginAtZero: true,
+								title: { display: true, text: "Count" }
+							}
+						}
+					}
+				});
+			})();
+		</script>
+		<!-- pending-complete chart end -->
+		<script>
+			const empData = {
+				"Bhagyashree Krishna Yel": [{
+					date: '2025-06-28',
+					calls: 517,
+					loginTarget: 72,
+					loginHours: 69.24,
+					deficit: "2:35:34",
+					notReady: 12,
+					util: 88,
+					occup: 78,
+					aht: "0:06:55"
+				},
+				{
+					date: '2025-06-29',
+					calls: 500,
+					loginTarget: 72,
+					loginHours: 68.00,
+					deficit: "3:00:00",
+					notReady: 10,
+					util: 85,
+					occup: 76,
+					aht: "0:07:05"
+				}
+				],
+				"Sajida Ansari": [{
+					date: '2025-06-29',
+					calls: 598,
+					loginTarget: 72,
+					loginHours: 68.03,
+					deficit: "3:56:01",
+					notReady: 10,
+					util: 90,
+					occup: 81,
+					aht: "0:07:10"
+				}],
+				// Add other employees in same format...
+			};
+
+			function timeToMinutes(time) {
+				const [hh, mm, ss] = time.split(':').map(Number);
+				return (hh * 60 + mm + ss / 60).toFixed(2);
+			}
+
+			function parseDate(str) {
+				return new Date(str);
+			}
+			const prodChartCtx = document.getElementById('productivityChart').getContext('2d');
+			let employeeMetricChart;
+
+			function renderChart(labels, data, chartLabel) {
+				if (employeeMetricChart) employeeMetricChart.destroy();
+				employeeMetricChart = new Chart(prodChartCtx, {
+					type: 'bar',
+					data: {
+						labels: labels,
+						datasets: [{
+							label: chartLabel,
+							data: data,
+							backgroundColor: '#1ECBE1',
+							borderRadius: 6,
+							barThickness: 20
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							datalabels: {
+								anchor: 'end',
+								align: 'top',
+								color: '#000',
+								font: {
+									weight: 'bold',
+									size: 12
+								},
+								formatter: val => val
+							},
+							legend: {
+								display: false
+							}
+						},
+						scales: {
+							y: {
+								beginAtZero: true,
+								ticks: {
+									precision: 0
+								}
+							}
+						}
+					},
+					plugins: [ChartDataLabels]
+				});
+			}
+
+			function showTotalMetricsChart(fromDate, toDate) {
+				let total = {
+					calls: 0,
+					loginTarget: 0,
+					loginHours: 0,
+					deficitMin: 0,
+					notReadySum: 0,
+					utilSum: 0,
+					occupSum: 0,
+					ahtMin: 0,
+					count: 0
+				};
+				for (const emp in empData) {
+					empData[emp].forEach(record => {
+						const date = parseDate(record.date);
+						if (date >= parseDate(fromDate) && date <= parseDate(toDate)) {
+							total.calls += record.calls;
+							total.loginTarget += record.loginTarget;
+							total.loginHours += record.loginHours;
+							total.deficitMin += +timeToMinutes(record.deficit);
+							total.notReadySum += record.notReady;
+							total.utilSum += record.util;
+							total.occupSum += record.occup;
+							total.ahtMin += +timeToMinutes(record.aht);
+							total.count++;
+						}
+					});
+				}
+				if (total.count === 0) {
+					renderChart([], [], "No data for selected range");
+					return;
+				}
+				const avg = (val) => (val / total.count).toFixed(2);
+				const labels = ["Total Agent Calls", "Login Target", "Login Hours", "Deficit (Min)", "Not Ready %",
+					"Utilization %", "Occupancy %", "AHT (Min)"
+				];
+				const data = [
+					total.calls,
+					total.loginTarget.toFixed(2),
+					total.loginHours.toFixed(2),
+					total.deficitMin.toFixed(2),
+					avg(total.notReadySum),
+					avg(total.utilSum),
+					avg(total.occupSum),
+					total.ahtMin.toFixed(2)
+				];
+				renderChart(labels, data, "Overall Totals");
+			}
+
+			function showEmployeeChart(empName, fromDate, toDate) {
+				const records = empData[empName] || [];
+				const filtered = records.filter(r => {
+					const d = parseDate(r.date);
+					return d >= parseDate(fromDate) && d <= parseDate(toDate);
+				});
+				if (filtered.length === 0) {
+					renderChart([], [], "No data for selected range");
+					return;
+				}
+				let total = {
+					calls: 0,
+					loginTarget: 0,
+					loginHours: 0,
+					deficitMin: 0,
+					notReady: 0,
+					util: 0,
+					occup: 0,
+					ahtMin: 0
+				};
+				filtered.forEach(r => {
+					total.calls += r.calls;
+					total.loginTarget += r.loginTarget;
+					total.loginHours += r.loginHours;
+					total.deficitMin += +timeToMinutes(r.deficit);
+					total.notReady += r.notReady;
+					total.util += r.util;
+					total.occup += r.occup;
+					total.ahtMin += +timeToMinutes(r.aht);
+				});
+				const count = filtered.length;
+				const labels = ["Total Agent Calls", "Login Target", "Login Hours", "Deficit (Min)", "Not Ready %",
+					"Utilization %", "Occupancy %", "AHT (Min)"
+				];
+				const data = [
+					total.calls,
+					total.loginTarget.toFixed(2),
+					total.loginHours.toFixed(2),
+					total.deficitMin.toFixed(2),
+					(total.notReady / count).toFixed(2),
+					(total.util / count).toFixed(2),
+					(total.occup / count).toFixed(2),
+					(total.ahtMin / count).toFixed(2)
+				];
+				renderChart(labels, data, empName + "'s Metrics");
+			}
+
+			function updateChartView() {
+				const fromDate = document.getElementById('aspectStartDate').value;
+				const toDate = document.getElementById('aspectEndDate').value;
+				const mode = document.getElementById('chartViewMode').value;
+				if (!fromDate || !toDate) return;
+				if (mode === 'metric') {
+					showTotalMetricsChart(fromDate, toDate);
+				} else {
+					const empName = document.getElementById('employeeFilterChart').value;
+					showEmployeeChart(empName, fromDate, toDate);
+				}
+			}
+			// Setup listeners
+			document.getElementById('chartViewMode').addEventListener('change', function () {
+				const empSelect = document.getElementById('employeeFilterChart');
+				if (this.value === 'metric') {
+					empSelect.style.display = "none";
+				} else {
+					empSelect.style.display = "inline-block";
+				}
+				updateChartView();
+			});
+			document.getElementById('employeeFilterChart').addEventListener('change', updateChartView);
+			document.getElementById('aspectStartDate').addEventListener('change', updateChartView);
+			document.getElementById('aspectEndDate').addEventListener('change', updateChartView);
+			// Initialize with today's date on load
+			document.addEventListener('DOMContentLoaded', () => {
+				const today = new Date().toISOString().split('T')[0];
+				document.getElementById('aspectStartDate').value = today;
+				document.getElementById('aspectEndDate').value = today;
+				updateChartView();
+			});
+		</script>
+		<script>
+			Chart.register(ChartDataLabels);
+
+			function getTATChartData(page, startDate, endDate, showAll) {
+				const data = [];
+				let start = new Date(startDate);
+				let end = new Date(endDate);
+				if (showAll) {
+					const today = new Date();
+					start = new Date(today);
+					end = new Date(today);
+				}
+				while (start <= end) {
+					const date = start.toLocaleDateString('en-GB');
+					const complete = Math.floor(Math.random() * 10 + 5);
+					const pending = Math.floor(Math.random() * 5 + 1);
+					const overall = complete + pending;
+					data.push({
+						date,
+						complete,
+						pending,
+						overall
+					});
+					start.setDate(start.getDate() + 1);
+				}
+				return {
+					labels: data.map(d => d.date),
+					complete: data.map(d => d.complete),
+					pending: data.map(d => d.pending),
+					overall: data.map(d => d.overall),
+					raw: data
+				};
+			}
+
+			function renderTATBarChart(canvasId, data, barWidth = 0.25, catWidth = 0.7) {
+				const ctx = document.getElementById(canvasId).getContext('2d');
+				if (window[canvasId + '_instance']) {
+					window[canvasId + '_instance'].destroy();
+				}
+				const completeTotal = data.complete.reduce((a, b) => a + b, 0);
+				const pendingTotal = data.pending.reduce((a, b) => a + b, 0);
+				const overallTotal = data.overall.reduce((a, b) => a + b, 0);
+				window[canvasId + '_instance'] = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: data.labels,
+						datasets: [{
+							label: `Compliance (${completeTotal})`,
+							data: data.complete,
+							backgroundColor: '#1ECBE1',
+							borderRadius: 4,
+							barPercentage: barWidth,
+							categoryPercentage: catWidth
+						},
+						{
+							label: `Non-Compliance (${pendingTotal})`,
+							data: data.pending,
+							backgroundColor: '#C65BEA',
+							borderRadius: 4,
+							barPercentage: barWidth,
+							categoryPercentage: catWidth
+						},
+						{
+							label: `Overall (${overallTotal})`,
+							data: data.overall,
+							backgroundColor: '#FFA726',
+							borderRadius: 4,
+							barPercentage: barWidth,
+							categoryPercentage: catWidth
+						}
+						]
+					},
+					options: {
+						responsive: true,
+						plugins: {
+							legend: {
+								position: 'top'
+							},
+							datalabels: {
+								anchor: 'end',
+								align: 'top',
+								offset: -6,
+								color: '#333',
+								font: {
+									weight: 'bold'
+								}
+							}
+						},
+						scales: {
+							x: {
+								ticks: {
+									color: '#495057'
+								},
+								grid: {
+									display: false
+								}
+							},
+							y: {
+								beginAtZero: true,
+								ticks: {
+									color: '#495057'
+								},
+								grid: {
+									color: '#e0e0e0'
+								}
+							}
+						}
+					},
+					plugins: [ChartDataLabels]
+				});
+			}
+
+			function capitalize(str) {
+				return str.charAt(0).toUpperCase() + str.slice(1);
+			}
+
+			function exportTATToExcel(dataArr, filename) {
+				const rows = [
+					["Page", "Date", "Complete", "Pending", "Overall"]
+				];
+				dataArr.forEach(entry => {
+					rows.push([entry.page, entry.date, entry.complete, entry.pending, entry.overall]);
+				});
+				let csvContent = rows.map(e => e.join(",")).join("\n");
+				let blob = new Blob([csvContent], {
+					type: "text/csv;charset=utf-8;"
+				});
+				let link = document.createElement("a");
+				link.href = URL.createObjectURL(blob);
+				link.setAttribute("download", filename + ".csv");
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
+			// 🔸 TAT CHARTS
+			function filterTATCharts() {
+				const page = document.getElementById('tatPageFilter').value;
+				let startDate = document.getElementById('tatStartDate').value || new Date().toISOString().split('T')[0];
+				let endDate = document.getElementById('tatEndDate').value || new Date().toISOString().split('T')[0];
+				const chartDivs = {
+					disposition: document.getElementById('chart-tat-disposition'),
+					helpline: document.getElementById('chart-tat-helpline'),
+					webchat: document.getElementById('chart-tat-webchat')
+				};
+				const chartTitles = {
+					disposition: document.getElementById('title-tat-disposition'),
+					helpline: document.getElementById('title-tat-helpline'),
+					webchat: document.getElementById('title-tat-webchat')
+				};
+				const pageNames = {
+					disposition: 'TAT Disposition Data',
+					helpline: 'TAT Helpline AOD',
+					webchat: 'TAT Webchat AOD'
+				};
+				const exportData = [];
+				Object.keys(chartDivs).forEach(p => {
+					chartDivs[p].style.display = 'none';
+					chartDivs[p].className = 'col-md-4 mb-4';
+					chartTitles[p].innerText = '';
+				});
+				if (page === 'all') {
+					Object.keys(chartDivs).forEach(p => {
+						const data = getTATChartData(p, startDate, endDate, true);
+						renderTATBarChart(`tatChart${capitalize(p)}`, data);
+						chartDivs[p].style.display = 'block';
+						chartTitles[p].innerText = pageNames[p];
+						data.raw.forEach(d => exportData.push({
+							...d,
+							page: pageNames[p]
+						}));
+					});
+					document.getElementById("tatDownloadBtn").onclick = () =>
+						exportTATToExcel(exportData, "All_TAT_Charts");
+				} else {
+					const data = getTATChartData(page, startDate, endDate, false);
+					renderTATBarChart(`tatChart${capitalize(page)}`, data);
+					chartDivs[page].style.display = 'block';
+					chartDivs[page].className = 'col-12 mb-4';
+					chartTitles[page].innerText = pageNames[page];
+					const exportDataSingle = data.raw.map(d => ({
+						...d,
+						page: pageNames[page]
+					}));
+					document.getElementById("tatDownloadBtn").onclick = () =>
+						exportTATToExcel(exportDataSingle, `${pageNames[page]}_Chart`);
+				}
+			}
+			window.onload = () => {
+				if (typeof filterMainCharts === 'function') filterMainCharts();
+				if (typeof filterTATCharts === 'function') filterTATCharts();
+			};
+		</script>
+		<script>
+			const labels = [
+				'Total Assign', 'Completed', 'Pending',
+				'Transfer To Helpline', 'Transfer To Warranty',
+				'Transfer To Smartcare', 'Call Complete',
+				'Total Average Time'
+			];
+			const chartData = {
+				total: [1970, 1400, 570, 194, 284, 167, 1263, 11.54],
+				Gaurav: [200, 100, 100, 20, 25, 14, 85, 12],
+				Anjali: [180, 130, 50, 15, 30, 13, 105, 11.4],
+				Vikram: [150, 90, 60, 18, 22, 15, 78, 12.8],
+				Riya: [220, 180, 40, 25, 28, 18, 160, 11.2],
+				Neha: [210, 160, 50, 22, 24, 17, 145, 11.6],
+				Priya: [190, 140, 50, 19, 27, 20, 135, 12],
+				Rahul: [175, 120, 55, 16, 26, 16, 110, 11],
+				Sneha: [185, 160, 25, 20, 23, 18, 155, 10.8],
+				Amit: [195, 150, 45, 21, 20, 17, 140, 12],
+				Kavita: [205, 170, 35, 18, 29, 19, 150, 11.6]
+			};
+			const ctx = document.getElementById("advisorBarChart").getContext("2d");
+			let barChart = new Chart(ctx, {
+				type: "bar",
+				data: {
+					labels: labels,
+					datasets: [{
+						label: "All Employees (Total)",
+						data: chartData.total,
+						backgroundColor: '#1ECBE1',
+						borderRadius: 4,
+						barThickness: 20
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					layout: {
+						padding: {
+							top: 35
+						}
+					},
+					plugins: {
+						datalabels: {
+							color: '#000',
+							anchor: 'end',
+							align: 'end',
+							clamp: true,
+							font: {
+								weight: 'bold'
+							},
+							formatter: (value, ctx) => {
+								const label = ctx.chart.data.labels[ctx.dataIndex];
+								if (['Transfer To Helpline', 'Transfer To Warranty', 'Transfer To Smartcare',
+									'Call Complete'
+								].includes(label)) {
+									// Show with Minutes (simulated random for display only)
+									const minutes = Math.floor(Math.random() * 6) + 10;
+									return `${value} (${minutes} Min)`;
+								}
+								if (label === 'Total Average Time') {
+									return `${value} Min`;
+								}
+								return value;
+							}
+						},
+						legend: {
+							display: false
+						},
+						tooltip: {
+							callbacks: {
+								label: ctx => `${ctx.parsed.y}`
+							}
+						}
+					},
+					scales: {
+						x: {
+							ticks: {
+								color: '#333'
+							},
+							categoryPercentage: 0.5,
+							barPercentage: 0.6
+						},
+						y: {
+							beginAtZero: true,
+							ticks: {
+								color: '#666',
+								precision: 0
+							}
+						}
+					}
+				},
+				plugins: [ChartDataLabels]
+			});
+			// Filters
+			const categoryFilter = document.getElementById("categoryFilter");
+			const employeeFilter = document.getElementById("employeeFilter");
+			categoryFilter.addEventListener("change", function () {
+				const val = this.value;
+				if (val === "total") {
+					employeeFilter.style.display = "none";
+					updateChart("total");
+				} else {
+					employeeFilter.style.display = "inline-block";
+					updateChart(employeeFilter.value);
+				}
+			});
+			employeeFilter.addEventListener("change", function () {
+				updateChart(this.value);
+			});
+
+			function updateChart(key) {
+				barChart.data.labels = labels;
+				barChart.data.datasets[0].data = chartData[key];
+				barChart.data.datasets[0].label = key === 'total' ? 'All Employees (Total)' : key;
+				barChart.update();
+			}
+		</script>
+</body>
+
+</html>

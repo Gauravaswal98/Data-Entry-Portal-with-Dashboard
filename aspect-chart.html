@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Aspect Chart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Coderthemes" name="author">
+    <link rel="shortcut icon" href="assets/images/tablogo.png" type="png">
+    <link href="assets/css/vendor/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="light-style">
+    <link href="assets/css/app-dark.min.css" rel="stylesheet" type="text/css" id="dark-style">
+    <style>
+        .leftside-menu,
+        footer {
+            display: none !important;
+        }
+
+        /* Agar content area adjust karna ho: */
+        main,
+        .content-page,
+        .page-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        /* Chart height reduced */
+
+        #tatadataChartCanvas {
+            height: 350px !important;
+        }
+
+
+        thead,
+        tbody {
+            text-align-last: center;
+            text-wrap: nowrap;
+        }
+
+        tbody tr {
+            text-align-last: left;
+        }
+
+        .appointment-table {
+            max-height: 300px;
+            height: fit-content;
+        }
+
+        .appointment-table table td {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table th {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .appointment-table table tbody tr {
+            margin-top: 50px;
+        }
+
+        #tailwind-table .sticky {
+            position: sticky;
+        }
+
+        #tailwind-table .left-0 {
+            left: 0;
+        }
+
+        #tailwind-table .right-0 {
+            right: 0;
+        }
+
+        #tailwind-table .top-0 {
+            top: 0;
+        }
+
+        #tailwind-table .z-10 {
+            z-index: 10;
+        }
+
+        #tailwind-table .z-20 {
+            z-index: 20;
+        }
+
+
+
+        .employee-performance-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .employee-performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-spacing: 0;
+        }
+
+        .employee-performance-table th,
+        .employee-performance-table td {
+            padding: 8px 12px;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .employee-performance-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #0b4d99;
+            z-index: 2;
+        }
+
+        .employee-performance-table tfoot td {
+            position: sticky;
+            bottom: 0;
+            background-color: #0b4d99;
+            color: #fff;
+            z-index: 1;
+            font-weight: bold;
+        }
+
+        .employee-performance-table .deficit-alert {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* summary css */
+        /* // Collapsible Closed */
+        details {
+            max-width: 1500px;
+            margin: 1rem auto;
+            padding: 1.5rem;
+            background-color: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 .50rem 1rem rgba(0, 0, 0, 0.1);
+
+            summary {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 0;
+                transition: margin-bottom .4s;
+                position: relative;
+            }
+
+            /* // Disable browser default marker */
+            summary::-webkit-details-marker,
+            summary::marker {
+                content: "";
+                display: none;
+            }
+
+            /* // Custom marker */
+            summary::after {
+                content: "";
+                font-size: 1.5rem;
+                line-height: 1;
+                margin-right: 1rem;
+                cursor: pointer;
+                padding: .75rem;
+                display: grid;
+                place-content: center;
+                aspect-ratio: 1;
+                line-height: 0;
+                position: absolute;
+                top: -.5rem;
+                right: -1.5rem;
+                border-radius: 50%;
+            }
+
+            *:not(summary) {
+                animation-name: fade;
+                animation-duration: .4s;
+            }
+        }
+
+        /* // Collapsible OPEN */
+        details[open] {
+
+            /* // Custom marker */
+            summary {
+                margin-bottom: 1.5rem;
+
+                &::after {
+                    content: "";
+                }
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="nav nav-tabs nav-bordered mb-3">
+        <li class="nav-item">
+            <a href="#input-types-preview" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
+                View
+                By Chart
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#input-types-code" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
+                View By Data
+            </a>
+        </li>
+    </ul>
+    <!-- end nav-->
+    <div class="tab-content">
+        <div class="tab-pane show active" id="input-types-preview">
+            <div style="margin-bottom: 20px;">
+                <select id="acpectemp" class="int-productdata">
+                    <option value="metric">Total (All Employees)
+                    </option>
+                    <option value="employee">Individual Employee
+                    </option>
+                </select>
+                <select id="employeeFilterChart" style="display:none;" class="int-productdata">
+                    <option value="Bhagyashree Krishna Yel">
+                        Bhagyashree
+                        Krishna
+                        Yel
+                    </option>
+                    <option value="Sajida Ansari">
+                        Sajida
+                        Ansari
+                    </option>
+                    <option value="Chhaya Digambar Narkar">
+                        Chhaya
+                        Digambar
+                        Narkar
+                    </option>
+                    <option value="Zeeshan Salim Glasswala">
+                        Zeeshan
+                        Salim
+                        Glasswala
+                    </option>
+                    <option value="Santosh Nirmal">
+                        Santosh
+                        Nirmal
+                    </option>
+                    <option value="Akshaya Dixit">
+                        Akshaya
+                        Dixit
+                    </option>
+                    <option value="Harshita Ghind">
+                        Harshita
+                        Ghind
+                    </option>
+                    <option value="Ashwini Ashok Kamble">
+                        Ashwini
+                        Ashok
+                        Kamble
+                    </option>
+                    <option value="Neeta Pawar">
+                        Neeta
+                        Pawar
+                    </option>
+                </select>
+                <label style="margin-left: 10px;">
+                    <strong>From</strong>
+                </label>
+                <input type="date" id="aspectStartDate" class="int-productdata">
+                <label style="margin-left: 10px;">
+                    <strong>To</strong>
+                </label>
+                <input type="date" id="aspectEndDate" class="int-productdata">
+                <button type="button" id="acpectapply" class="int-productdata btn btn-primary mb-2 float-end"
+                    title="Apply filters">
+                    <img src="assets/images/double-check.gif" alt="img"
+                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                </button>
+                <div id="tataChartContainer" style="width: 100%; max-width: 100%;">
+                    <canvas id="tatadataChartCanvas" style="margin-top: 30px; width: 100% !important; height: auto;">
+                    </canvas>
+                </div>
+            </div>
+            <!-- end row-->
+        </div>
+        <!-- end preview-->
+        <div class="tab-pane" id="input-types-code">
+            <div class="col-12">
+                <div class="card widget-flat" style="max-height:500px; height:fit-content;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between gap-2 mb-2 overflow-auto">
+                            <div class="app-search dropdown float-center">
+                                <form>
+                                    <div>
+                                        <input type="text" class="form-control" placeholder="Search..." id="aa"
+                                            style=" border-radius: 5px; background-color: #eeeeee;">
+                                        <span class="search-icon">
+                                            <img src="assets/images/searchicon.png" alt="img" style="height:20px;">
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                            <div title="Select data range for your data" class="app-search dropdown">
+                                <input name="range" type="text" class="form-control date" data-toggle="date-picker"
+                                    data-picker="true" data-locale="{'format': 'DD/MM hh:mm A'}"
+                                    style="width:230px; height:35px; margin-left:5px;border: 1px solid #ebebeb;" value>
+                                <span class="search-icon">
+                                    <img src="assets/images/daterange.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </span>
+                            </div>
+                            <div>
+                                <button type="button" class="int-productdata btn btn-primary mb-2" title="Apply filters"
+                                    style="display: flex; justify-content: space-between; gap:5px;">
+                                    <img src="assets/images/double-check.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </button>
+                            </div>
+                            <div class="float-end">
+                                <button type="button" class="int-productdata btn btn-danger mb-2 me-2"
+                                    title="Download data"
+                                    style="display: flex; justify-content: space-between; gap:5px;">
+                                    <img src="assets/images/download-folder.gif" alt="img"
+                                        style="border-radius:5px; height: 30px; margin-top: -5px;">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="employee-performance-wrapper appointment-table">
+                            <table id="table"
+                                class="employee-performance-table table table-bordered table-centered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Employee Name</th>
+                                        <th>Process</th>
+                                        <th>Total Agent Calls</th>
+                                        <th>Login Target</th>
+                                        <th>Login Hours</th>
+                                        <th>Deficit</th>
+                                        <th>Not Ready %</th>
+                                        <th>Utilization %</th>
+                                        <th>Occupancy %</th>
+                                        <th>AHT</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="advisor">
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Bhagyashree Krishna Yel</td>
+                                        <td>Tiger Team – Helpline</td>
+                                        <td>517</td>
+                                        <td>72.00</td>
+                                        <td>69.24</td>
+                                        <td class="deficit-alert">
+                                            2:35:34</td>
+                                        <td>12%</td>
+                                        <td>88%</td>
+                                        <td>78%</td>
+                                        <td>0:06:55</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Sajida Ansari</td>
+                                        <td>Tiger Team – Helpline</td>
+                                        <td>598</td>
+                                        <td>72.00</td>
+                                        <td>68.03</td>
+                                        <td class="deficit-alert">
+                                            3:56:01</td>
+                                        <td>10%</td>
+                                        <td>90%</td>
+                                        <td>81%</td>
+                                        <td>0:07:10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Chhaya Digambar Narkar</td>
+                                        <td>Tiger Team – Helpline</td>
+                                        <td>603</td>
+                                        <td>81.00</td>
+                                        <td>80.55</td>
+                                        <td>0:04:36</td>
+                                        <td>10%</td>
+                                        <td>90%</td>
+                                        <td>83%</td>
+                                        <td>0:06:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Zeeshan Salim Glasswala</td>
+                                        <td>Tiger Team – Smart Car</td>
+                                        <td>187</td>
+                                        <td>72.00</td>
+                                        <td>72.11</td>
+                                        <td>0:00:00</td>
+                                        <td>10%</td>
+                                        <td>90%</td>
+                                        <td>66%</td>
+                                        <td>0:07:45</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Santosh Nirmal</td>
+                                        <td>Tiger Team – Warranty</td>
+                                        <td>43</td>
+                                        <td>72.00</td>
+                                        <td>74.20</td>
+                                        <td>0:00:00</td>
+                                        <td>5%</td>
+                                        <td>82%</td>
+                                        <td>89%</td>
+                                        <td>0:06:05</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Akshaya Dixit</td>
+                                        <td>Tiger Team – Warranty</td>
+                                        <td>335</td>
+                                        <td>81.00</td>
+                                        <td>82.49</td>
+                                        <td>0:00:00</td>
+                                        <td>8%</td>
+                                        <td>92%</td>
+                                        <td>39%</td>
+                                        <td>0:07:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Harshita Ghind</td>
+                                        <td>Tiger Team – Warranty</td>
+                                        <td>54</td>
+                                        <td>54.00</td>
+                                        <td>50.54</td>
+                                        <td class="deficit-alert">
+                                            3:05:56</td>
+                                        <td>9%</td>
+                                        <td>91%</td>
+                                        <td>26%</td>
+                                        <td>0:06:50</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Ashwini Ashok Kamble</td>
+                                        <td>Tiger Team – Webchat</td>
+                                        <td>780</td>
+                                        <td>72.00</td>
+                                        <td>65.52</td>
+                                        <td class="deficit-alert">
+                                            6:07:46</td>
+                                        <td>11%</td>
+                                        <td>89%</td>
+                                        <td>62%</td>
+                                        <td>0:07:35</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2025-06-28</td>
+                                        <td>Neeta Pawar</td>
+                                        <td>Tiger Team – Webchat</td>
+                                        <td>306</td>
+                                        <td>81.00</td>
+                                        <td>82.26</td>
+                                        <td>0:00:00</td>
+                                        <td>10%</td>
+                                        <td>90%</td>
+                                        <td>69%</td>
+                                        <td>0:06:25</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" style="text-align: center;">
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td>2337</td>
+                                        <td>657.00</td>
+                                        <td>646.57</td>
+                                        <td>15:49:53</td>
+                                        <td>10%</td>
+                                        <td>30%</td>
+                                        <td>62%</td>
+                                        <td>0:06:55</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end card-body -->
+                </div>
+                <!-- end card-->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end preview code-->
+    </div>
+    <!-- end tab-content-->
+    <script src="assets/js/vendor.min.js"></script>
+    <script src="assets/js/app.min.js"></script>
+    <script src="assets/js/table search int base.js"></script>
+    <script src="assets/js/row bg.js"></script>
+    <script src="assets/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="assets/js/vendor/dataTables.bootstrap5.js"></script>
+    <script src="assets/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="assets/js/vendor/responsive.bootstrap5.min.js"></script>
+    <script src="assets/js/vendor/dataTables.checkboxes.min.js"></script>
+    <script src="assets/js/vendor/Chart.bundle.min.js"></script>
+    <script src="assets/js/summary.js"></script>
+    <!-- third party js ends -->
+    <!-- demo app -->
+    <script src="assets/js/pages/demo.dashboard-projects.js"></script>
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="assets/js/aspect-chart.js"></script>
+
+</body>
+
+</html>
